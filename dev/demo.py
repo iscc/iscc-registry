@@ -1,4 +1,4 @@
-"""Initialize a fresh installation
+"""Initialize a fresh installation (resets pre-existing development databse).
 
 - creates the database
 - import theme fixtures
