@@ -17,6 +17,8 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env("DEBUG")
 ALLOWED_HOSTS = []
 
+AUTH_USER_MODEL = "iscc_registry.User"
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",

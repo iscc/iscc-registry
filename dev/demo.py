@@ -1,4 +1,4 @@
-"""Initialize a fresh installation (resets pre-existing development databse).
+"""Initialize a fresh installation (resets pre-existing development database).
 
 - creates the database
 - import theme fixtures
@@ -31,6 +31,7 @@ def demo():
             log.error(f"failed deleting dev database - retry after stopping dev server")
             sys.exit(0)
     log.info("applying database migrations")
+    management.call_command("makemigrations")
     management.call_command("migrate")
 
     log.info("creating demo user")
