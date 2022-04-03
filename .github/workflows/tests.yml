@@ -22,7 +22,7 @@ jobs:
         run: poetry install
 
       - name: Create Migrations
-        run: poe demo
+        run: poetry run poe demo
 
       - name: Run Tests (Pure Python with coverage)
         run: poetry run pytest
