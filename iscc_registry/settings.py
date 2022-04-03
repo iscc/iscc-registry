@@ -6,6 +6,7 @@ env = environ.Env(
     # set casting, default value
     DEBUG=(bool, False),
     SECRET_KEY=(str, ""),
+    DATABASE_URL=(str, "sqlite://:memory:")
 )
 
 BASE_DIR = Path(__file__).resolve().parent.parent
