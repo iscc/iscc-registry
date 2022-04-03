@@ -23,7 +23,7 @@ jobs:
         run: |
           poetry install
           poetry run python manage.py makemigrations
-          poetry run python manage.oy migrate
+          poetry run python manage.py migrate
 
       - name: Run Tests
         run: poetry run pytest
