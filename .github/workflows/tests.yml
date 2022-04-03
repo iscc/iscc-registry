@@ -22,7 +22,8 @@ jobs:
       - name: Install Project
         run: |
           poetry install
-          poetry run poe demo
+          poetry run python manage.py makemigrations
+          poetry run python manage.oy migrate
 
       - name: Run Tests
         run: poetry run pytest
