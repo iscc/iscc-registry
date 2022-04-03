@@ -481,6 +481,17 @@ optional = false
 python-versions = ">=3.6"
 
 [[package]]
+name = "whitenoise"
+version = "6.0.0"
+description = "Radically simplified static file serving for WSGI applications"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.extras]
+brotli = ["brotli"]
+
+[[package]]
 name = "win32-setctime"
 version = "1.1.0"
 description = "A small Python utility to set file creation time on Windows"
@@ -502,7 +513,7 @@ python-versions = ">=3.6"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<4.0"
-content-hash = "3f1d822a73b71257b863c9c746c844939a51f1c127219867fe519d170cd1aa62"
+content-hash = "047dda667725c02a0d88479280439ef3ddddde723cc74dab23b3a529ef4af853"
 
 [metadata.files]
 asgiref = [
@@ -852,6 +863,10 @@ tzdata = [
 uvarint = [
     {file = "uvarint-1.2.0-py3-none-any.whl", hash = "sha256:9dcc98ad92b642c57494bed9370c4f93479d2d36223b2c3702823f0aa8b1a9a3"},
     {file = "uvarint-1.2.0.tar.gz", hash = "sha256:7cc17481c9af8ebe3978f5357412b57ff93ce8b14712236338f782cc8ae9a989"},
+]
+whitenoise = [
+    {file = "whitenoise-6.0.0-py3-none-any.whl", hash = "sha256:5a4aff543ee860fbe40d743e556adf92ccd41b7df45697cae074afdf657056b9"},
+    {file = "whitenoise-6.0.0.tar.gz", hash = "sha256:08c42bc535f9777eea1a599289d9433f081921f97887eaf6f559446b2a080374"},
 ]
 win32-setctime = [
     {file = "win32_setctime-1.1.0-py3-none-any.whl", hash = "sha256:231db239e959c2fe7eb1d7dc129f11172354f98361c4fa2d6d2d7e278baa8aad"},
