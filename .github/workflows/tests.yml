@@ -4,6 +4,7 @@ on: [push, pull_request]
 jobs:
   tests:
     strategy:
+      fail-fast: false
       matrix:
         python-version: [3.8, 3.9, '3.10']
     runs-on: ubuntu-latest
@@ -21,8 +22,7 @@ jobs:
       - name: Install Project
         run: |
           poetry install
-          poetry shell
-          poe demo
+          poetry run poe demo
 
       - name: Run Tests
-        run: pytest
+        run: poetry run pytest
