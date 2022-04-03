@@ -12,6 +12,10 @@ python = ">=3.8,<4.0"
 Django = "^4.0"
 django-environ = "^0.8.1"
 loguru = "^0.6.0"
+django-ninja = "^0.17.0"
+iscc-core = "^0.2.4"
+jcs = "^0.2.0"
+django-json-widget = "^1.1.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1"
@@ -26,6 +30,7 @@ target-version = ['py38']
 
 [tool.poe.tasks]
 demo = { cmd = "poetry run python -m dev.demo", help = "Install app with demo user"}
+load = { cmd = "poetry run python -m dev.load", help = "Load some test data"}
 format = { cmd = "poetry run black .", help = "Code style formating with black" }
 test = { cmd = "poetry run pytest", help = "Run tests" }
 all = ["format", "test"]

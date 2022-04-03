@@ -26,7 +26,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "iscc_registry.apps.IsccRegistryConfig",
+    "django_json_widget",
+    "iscc_registry",
 ]
 
 MIDDLEWARE = [
