@@ -18,11 +18,11 @@ jobs:
         with:
           poetry-version: 1.1.13
 
-      - name: Install Dependencies
-        run: poetry install
+      - name: Install Project
+        run: |
+          poetry install
+          poetry shell
+          poe demo
 
-      - name: Create Migrations
-        run: poetry run poe demo
-
-      - name: Run Tests (Pure Python with coverage)
-        run: poetry run pytest --ds=tests.settings
+      - name: Run Tests
+        run: pytest
