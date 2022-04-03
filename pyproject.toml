@@ -35,7 +35,8 @@ demo = { cmd = "poetry run python -m dev.demo", help = "Install app with demo us
 load = { cmd = "poetry run python -m dev.load", help = "Load some test data"}
 format = { cmd = "poetry run black .", help = "Code style formating with black" }
 test = { cmd = "poetry run pytest", help = "Run tests" }
-all = ["format", "test"]
+reqs = { cmd = "poetry export -f requirements.txt --output requirements.txt", help = "Update requirements.txt"}
+all = ["reqs", "format", "test"]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "tests.settings"

@@ -7,7 +7,7 @@ env = environ.Env(
     DEBUG=(bool, False),
     SECRET_KEY=(str, "warning-todo-change-to-secure-secret-for-production-env"),
     DATABASE_URL=(str, "sqlite://:memory:"),
-    ALLOWED_HOSTS=(list, ["*"])
+    ALLOWED_HOSTS=(list, ["*"]),
 )
 
 BASE_DIR = Path(__file__).resolve().parent.parent
