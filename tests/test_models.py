@@ -31,6 +31,7 @@ def test_declaration_update(db, dclr_a, dclr_a_update):
     assert iscc_id_obj_a == iscc_id_obj_b
     assert iscc_id_obj_b.iscc_id_declarations.count() == 2
     assert iscc_id_obj_b.meta_url.startswith("ipfs://")
+    assert models.IsccIdModel.objects.filter(iscc_id=iscc_id_obj_a.iscc_id).count() == 1
 
 
 def test_declaration_freeze(db, dclr_a):

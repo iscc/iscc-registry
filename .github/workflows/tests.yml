@@ -25,4 +25,4 @@ jobs:
         run: poetry run poe demo
 
       - name: Run Tests (Pure Python with coverage)
-        run: poetry run pytest
+        run: poetry run pytest --ds=tests.settings
