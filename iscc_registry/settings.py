@@ -5,8 +5,9 @@ from pathlib import Path
 env = environ.Env(
     # set casting, default value
     DEBUG=(bool, False),
-    SECRET_KEY=(str, ""),
-    DATABASE_URL=(str, "sqlite://:memory:")
+    SECRET_KEY=(str, "warning-todo-change-to-secure-secret-for-production-env"),
+    DATABASE_URL=(str, "sqlite://:memory:"),
+    ALLOWED_HOSTS=(list, ["*"])
 )
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -16,7 +17,7 @@ environ.Env.read_env(BASE_DIR / ".env")
 
 SECRET_KEY = env("SECRET_KEY")
 DEBUG = env("DEBUG")
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env("ALLOWED_HOSTS")
 
 AUTH_USER_MODEL = "iscc_registry.User"
 
