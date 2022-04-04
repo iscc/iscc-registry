@@ -1,6 +1,5 @@
-from django.http import HttpResponse
+from django.shortcuts import render
 
 
 def index(request):
-    html = "<html><body><h1>ISCC - Decentralized Content Registry</h1></body></html>"
-    return HttpResponse(html)
+    return render(request, "index.html")
