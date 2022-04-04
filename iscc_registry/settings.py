@@ -7,6 +7,7 @@ env = environ.Env(
     DEBUG=(bool, False),
     SECRET_KEY=(str, "warning-todo-change-to-secure-secret-for-production-env"),
     DATABASE_URL=(str, "sqlite://:memory:"),
+    REDIS_URL=(str, "redis://localhost:6379/?db=1"),
     ALLOWED_HOSTS=(list, ["*"]),
 )
 
@@ -31,6 +32,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_json_widget",
+    "huey.contrib.djhuey",
     "iscc_registry",
 ]
 
@@ -98,3 +100,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 X_FRAME_OPTIONS = "SAMEORIGIN"
 SILENCED_SYSTEM_CHECKS = ["security.W019"]
 FIXTURE_DIRS = [BASE_DIR / "iscc_registry/fixtures"]
+
+# huey background tasks
+HUEY = {
+    "name": "iscc_registry",
+    "url": env("REDIS_URL"),
+    "immediate_use_memory": env("DEBUG"),
+    "immediate": env("DEBUG"),
+}
