@@ -147,5 +147,3 @@ cython_debug/
 # Dev deb
 dev/dev.db
 
-# Ignore migrations
-iscc_registry/migrations/0*.py
