@@ -11,7 +11,13 @@ admin.site.register(models.User, UserAdmin)
 
 @admin.register(models.ChainModel)
 class ChainAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "url_template")
+
+    list_display = ("chain_id", "name", "url_template", "testnet_template")
+    list_editable = ("url_template", "testnet_template")
+
+    @admin.display(description="chain-id")
+    def chain_id(self, obj):
+        return obj.chain
 
 
 @admin.register(models.IsccCodeModel)
@@ -32,36 +38,33 @@ class IsccIDAdmin(admin.ModelAdmin):
     ]
     list_display = [
         "iscc_id",
+        "simhash",
         "iscc_code",
-        "declarer",
+        "owner",
         "revision",
     ]
-
-    # odering = ("-timestamp",)
 
 
 @admin.register(models.BlockModel)
 class BlockAdmin(admin.ModelAdmin):
-    list_display = ("chain", "block_height", "block_hash")
+    list_display = ("chain", "block", "hash")
     list_filter = ("chain",)
 
 
 @admin.register(models.DeclarationModel)
 class DeclarationAdmin(admin.ModelAdmin):
-    list_display = ("__str__", "iscc_id", "get_chain", "block", "tx_hash", "tx_out_idx")
+    list_display = (
+        "id",
+        "iscc_id",
+        "admin_time",
+        "chain",
+        "block",
+        "tx_idx",
+        "declarer",
+        "meta_url",
+        "registrar",
+    )
 
-    formfield_overrides = {
-        JSONField: {
-            "widget": JSONEditorWidget(width="54em", height="32em", options={"mode": "view"})
-        },
-    }
-
-    def get_queryset(self, request):
-        """Annotate with source chain"""
-        queryset = super().get_queryset(request)
-        queryset = queryset.annotate(_chain=F("block__chain__name"))
-        return queryset
-
-    @admin.display(description="Chain")
-    def get_chain(self, obj):
-        return obj._chain
+    @admin.display(ordering="time", description="time")
+    def admin_time(self, obj):
+        return obj.time.strftime("%Y-%m-%d %H:%M:%S")

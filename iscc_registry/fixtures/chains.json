@@ -1,0 +1,37 @@
+[
+    {
+        "model": "iscc_registry.chainmodel",
+        "pk": 0,
+        "fields": {
+            "name": "PRIVATE",
+            "url_template": ""
+        }
+    },
+    {
+        "model": "iscc_registry.chainmodel",
+        "pk": 1,
+        "fields": {
+            "name": "BITCOIN",
+            "url_template": "https://blockchair.com/bitcoin/transaction/{tx_hash}",
+            "testnet_template": "https://blockchair.com/bitcoin/testnet/transaction/{tx_hash}"
+        }
+    },
+    {
+        "model": "iscc_registry.chainmodel",
+        "pk": 2,
+        "fields": {
+            "name": "ETHEREUM",
+            "url_template": "https://etherscan.io/tx/{tx_hash}",
+            "testnet_template": "https://rinkeby.etherscan.io/tx/{tx_hash}"
+        }
+    },
+    {
+        "model": "iscc_registry.chainmodel",
+        "pk": 3,
+        "fields": {
+            "name": "POLYGON",
+            "url_template": "https://polygonscan.com/tx/{tx_hash}",
+            "testnet_template": "https://mumbai.polygonscan.com/tx/{tx_hash}"
+        }
+    }
+]

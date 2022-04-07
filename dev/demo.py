@@ -24,17 +24,29 @@ django.setup()
 def demo():
     dev_db = HERE / "dev.db"
     if dev_db.exists():
-        log.info(f"deleting dev database at {dev_db}")
+        log.info(f"purge dev database at {dev_db}")
         try:
             os.remove(HERE / "dev.db")
         except Exception:
             log.error(f"failed deleting dev database - retry after stopping dev server")
             sys.exit(0)
-    log.info("applying database migrations")
+
+    log.info("purge existing migrations")
+    migrations_path = HERE.parent / "iscc_registry/migrations"
+    migrations_files = migrations_path.glob("000*.py")
+    for mig in migrations_files:
+        log.info(f"purging {mig.name}")
+        os.remove(mig)
+
+    log.info("run database migrations")
     management.call_command("makemigrations")
     management.call_command("migrate")
 
-    log.info("creating demo user")
+    log.info("load fixtures")
+    management.call_command("loaddata", "--app", "admin_interface.Theme", "theme")
+    management.call_command("loaddata", "--app", "iscc_registry.ChainModel", "chains")
+
+    log.info("create demo user")
     User = get_user_model()
     username = "demo"
     password = "demo"

@@ -1,9 +1,6 @@
 from django.contrib.auth.models import AbstractUser, Group
-from django.db import models, transaction
+from django.db import models
 from django.urls import reverse
-from iscc_registry.exceptions import RegistrationError
-from iscc_registry.schema import Declaration
-import iscc_core as ic
 
 
 class User(AbstractUser):
@@ -29,9 +26,38 @@ class ChainModel(models.Model):
     class Meta:
         verbose_name = "Chain"
         verbose_name_plural = "Chains"
+        ordering = ["chain"]
 
-    name = models.SlugField()
-    url_template = models.CharField(max_length=256, blank=True)
+    class Chain(models.IntegerChoices):
+        PRIVATE = 0
+        BITCOIN = 1
+        ETHEREUM = 2
+        POLYGON = 3
+
+    chain = models.PositiveSmallIntegerField(
+        primary_key=True,
+        verbose_name="chain-id",
+        choices=Chain.choices,
+        help_text="Unique ID of blockchain network",
+    )
+
+    name = models.SlugField(
+        verbose_name="name",
+        max_length=32,
+        help_text="Name of blockchain network",
+    )
+
+    url_template = models.CharField(
+        verbose_name="url template",
+        max_length=256,
+        help_text="Template for explorer transaction url",
+    )
+
+    testnet_template = models.CharField(
+        verbose_name="testnet template",
+        max_length=256,
+        help_text="Template for testnet explorer transaction url",
+    )
 
     def __str__(self):
         return self.name
@@ -72,23 +98,17 @@ class IsccIdModel(models.Model):
         db_index=True,
     )
 
+    simhash = models.CharField(
+        verbose_name="simhash", max_length=32, help_text="Simhash decoded ISCC-ID"
+    )
+
     iscc_code = models.ForeignKey(
         "IsccCodeModel",
         verbose_name="ISCC-CODE",
-        null=False,
-        blank=False,
-        editable=False,
+        null=True,
+        default=None,
         related_name="iscc_ids",
         on_delete=models.PROTECT,
-    )
-
-    declarer = models.ForeignKey(
-        "User",
-        verbose_name="declarer",
-        null=True,
-        related_name="declarations",
-        on_delete=models.PROTECT,
-        help_text="PUBLIC-KEY or WALLET-ADDRESS of original DECLARING PARTY",
     )
 
     owner = models.ForeignKey(
@@ -97,27 +117,10 @@ class IsccIdModel(models.Model):
         null=True,
         related_name="ownerships",
         on_delete=models.PROTECT,
-        help_text="PUBLIC-KEY or WALLET-ADDRESS of current OWNER (after transfer)",
+        help_text="Wallet address of current owner",
     )
 
     # Optional fields
-
-    meta_url = models.URLField(
-        verbose_name="metadata url",
-        null=True,
-        blank=True,
-        default=None,
-        help_text="URL with ISCC Metadata",
-    )
-
-    registrar = models.ForeignKey(
-        User,
-        verbose_name="registrar",
-        null=True,
-        on_delete=models.PROTECT,
-        related_name="registrations",
-        help_text="PUBLIC-KEY or WALLET-ADDRESS of REGISTRAR",
-    )
 
     frozen = models.BooleanField(
         verbose_name="frozen",
@@ -149,6 +152,7 @@ class BlockModel(models.Model):
     class Meta:
         verbose_name = "Block"
         verbose_name_plural = "Blocks"
+        # constraints = [models.UniqueConstraint(fields=("chain", "block"), name="unique_block")]
 
     chain = models.ForeignKey(
         "ChainModel",
@@ -158,21 +162,21 @@ class BlockModel(models.Model):
         related_name="blocks",
     )
 
-    block_height = models.PositiveBigIntegerField(
+    block = models.PositiveBigIntegerField(
         verbose_name="block height",
         help_text="N-th block on source ledger",
     )
 
-    block_hash = models.CharField(
+    hash = models.CharField(
         verbose_name="block hash",
-        max_length=128,
+        max_length=255,
         unique=True,
         db_index=True,
-        help_text="Hash of block that includes the ISCC-DECLARATION",
+        help_text="Hash of block",
     )
 
     def __str__(self):
-        return self.block_hash
+        return f"{self.chain_id}-{self.block}-{self.hash[:6]}"
 
 
 class DeclarationModel(models.Model):
@@ -181,132 +185,100 @@ class DeclarationModel(models.Model):
     class Meta:
         verbose_name = "Declaration"
         verbose_name_plural = "Declarations"
-        get_latest_by = ["id"]
-        ordering = ["id"]
-        constraints = [models.UniqueConstraint(fields=("tx_hash", "tx_out_idx"), name="unique_tx")]
+        get_latest_by = ["time", "chain_id", "block_id", "tx_idx"]
+        constraints = [models.UniqueConstraint(fields=("chain", "tx_hash"), name="unique_tx")]
 
-    id = models.PositiveBigIntegerField(
-        verbose_name="id",
-        primary_key=True,
-        editable=False,
-        help_text="Declaration-ID with block timestamp based flake (total ordering)",
+    time = models.DateTimeField(
+        verbose_name="time", null=False, help_text="Block time of declaration"
     )
 
-    iscc_id = models.ForeignKey(
-        "IsccIdModel",
-        verbose_name="iscc-id",
-        related_name="iscc_id_declarations",
-        on_delete=models.PROTECT,
-        null=True,
-        help_text="ISCC-ID minted by this declaration",
+    chain = models.ForeignKey(
+        "ChainModel",
+        verbose_name="chain",
+        null=False,
+        on_delete=models.CASCADE,
+        related_name="declarations_in_chain",
+        help_text="Source chain of the declaration",
     )
 
     block = models.ForeignKey(
         "BlockModel",
         verbose_name="block",
+        null=False,
         related_name="declarations_in_block",
         on_delete=models.CASCADE,
-        null=True,
-        help_text="The block that includes the ISCC-DECLARATION",
+        help_text="Index of block that includes the ISCC-DECLARATION",
+    )
+
+    tx_idx = models.PositiveSmallIntegerField(
+        verbose_name="transaction index",
+        null=False,
+        help_text="Index of transaction within block including the ISCC-DECLARATION",
     )
 
     tx_hash = models.CharField(
         verbose_name="transaction hash",
-        max_length=128,
+        null=False,
+        blank=False,
+        max_length=255,
+        unique=True,
         help_text="Hash of transaction that includes the ISCC-DECLARATION",
     )
 
-    tx_out_idx = models.PositiveSmallIntegerField(
-        verbose_name="transaction output",
-        default=0,
-        help_text="Output index that includes ISCC-DECLARATION (UTXO based chains)",
+    declarer = models.ForeignKey(
+        "User",
+        to_field="username",
+        verbose_name="declarer",
+        null=False,
+        on_delete=models.PROTECT,
+        related_name="declarations_from_user",
     )
 
-    declaration = models.JSONField(
-        verbose_name="declaration data",
+    message = models.CharField(
+        verbose_name="message",
+        max_length=255,
+        null=True,
+        default=None,
+        help_text="declaration processing instruction",
+    )
+
+    meta_url = models.URLField(
+        verbose_name="meta_url",
         null=True,
         blank=True,
         default=None,
-        help_text="Original declaration data",
+    )
+
+    registrar = models.ForeignKey(
+        "User",
+        to_field="username",
+        verbose_name="registrar",
+        null=True,
+        default=None,
+        on_delete=models.SET_NULL,
+        related_name="declarations_from_registrar",
+    )
+
+    iscc_id = models.ForeignKey(
+        "IsccIdModel",
+        verbose_name="iscc-id",
+        related_name="declarations",
+        on_delete=models.PROTECT,
+        null=True,
+        default=None,
+        help_text="ISCC-ID minted by this declaration",
+    )
+
+    metadata = models.JSONField(
+        verbose_name="metadata",
+        null=True,
+        blank=True,
+        default=None,
+        help_text="Linked ISCC Metadata",
     )
 
     def __str__(self):
-        return ic.Flake.from_int(self.id).string
-
-    @classmethod
-    def register(cls, dclr: Declaration) -> IsccIdModel:
-        """Register a new declaration"""
-
-        # Check for duplicate registration
-        if cls.objects.filter(tx_hash=dclr.tx_hash, tx_out_idx=dclr.tx_out_idx).exists():
-            raise RegistrationError(f"{dclr.tx_hash}:{dclr.tx_out_idx} already registered")
-
-        dclr_id = dclr.get_id()
-
-        with transaction.atomic():
-            # Create Declaration object
-            dclr_obj = DeclarationModel.objects.create(
-                id=dclr_id,
-                tx_hash=dclr.tx_hash,
-                tx_out_idx=dclr.tx_out_idx,
-                declaration=dclr.dict(),
-            )
-            # Set block
-            chain_obj, _ = ChainModel.objects.get_or_create(
-                id=dclr.chain_id, defaults={"name": dclr.chain}
-            )
-
-            block_obj, _ = BlockModel.objects.get_or_create(
-                block_hash=dclr.block_hash,
-                block_height=dclr.block_height,
-                chain=chain_obj,
-            )
-            block_obj.declarations_in_block.add(dclr_obj)
-
-            # Create Users
-            declarer_obj = User.get_or_create(wallet=dclr.declarer, group="declarer")
-            registrar_obj = None
-            if dclr.registrar:
-                registrar_obj = User.get_or_create(wallet=dclr.declarer, group="registrar")
-
-            iscc_code_obj, _ = IsccCodeModel.objects.get_or_create(code=dclr.iscc_code)
-            # Mint ISCC-ID
-            uc = 0
-            while True:
-                iscc_id = dclr.iscc_id(uc=uc)
-                try:
-                    iscc_id_obj = IsccIdModel.objects.get(iscc_id=iscc_id)
-                except IsccIdModel.DoesNotExist:
-                    # ISCC-ID is unique Mint and return
-                    iscc_id_obj = IsccIdModel.objects.create(
-                        iscc_id=iscc_id,
-                        iscc_code=iscc_code_obj,
-                        declarer=declarer_obj,
-                        owner=declarer_obj,
-                        meta_url=dclr.meta_url,
-                        registrar=registrar_obj,
-                        frozen=dclr.freeze,
-                        deleted=dclr.delete,
-                    )
-                    dclr_obj.iscc_id = iscc_id_obj
-                    dclr_obj.save()
-                    return iscc_id_obj
-                # ISCC-ID exists - check if we can update
-                can_update = iscc_id_obj.owner.username == dclr.declarer
-                can_update = (
-                    can_update and iscc_id_obj.frozen is False and iscc_id_obj.deleted is False
-                )
-                can_update = can_update and iscc_id_obj.iscc_code.code == dclr.iscc_code
-                if can_update:
-                    iscc_id_obj.frozen = dclr.freeze
-                    iscc_id_obj.deleted = dclr.delete
-                    iscc_id_obj.meta_url = dclr.meta_url
-                    iscc_id_obj.revision = iscc_id_obj.revision + 1
-                    iscc_id_obj.registrar = registrar_obj
-                    iscc_id_obj.iscc_id_declarations.add(dclr_obj)
-                    iscc_id_obj.save()
-                    return iscc_id_obj
-                uc += 1
+        return f"{self.chain.name}-{self.block_id}-{self.tx_hash[:6]}"
 
     def delete(self, using=None, keep_parents=False):
         pass

@@ -3,6 +3,7 @@ import pytest
 
 from iscc_registry.exceptions import RegistrationError
 from iscc_registry import models
+from iscc_registry.transactions import register
 
 wallet_a = "0x1ad91ee08f21be3de0ba2ba6918e714da6b45836"
 
@@ -18,24 +19,26 @@ def test_user_get_or_create(db):
 
 
 def test_declaration_register(db, dclr_a):
-    iscc_id_obj = models.DeclarationModel.register(dclr_a)
+    iscc_id_obj = register(dclr_a)
     assert iscc_id_obj.iscc_id == "MIAKOP7RYAH5SVPN"
     with pytest.raises(RegistrationError):
-        models.DeclarationModel.register(dclr_a)
+        register(dclr_a)
 
 
 def test_declaration_update(db, dclr_a, dclr_a_update):
-    iscc_id_obj_a = models.DeclarationModel.register(dclr_a)
-    assert iscc_id_obj_a.meta_url is None
-    iscc_id_obj_b = models.DeclarationModel.register(dclr_a_update)
+    iscc_id_obj_a = register(dclr_a)
+    assert iscc_id_obj_a.declarations.latest().meta_url is None
+    iscc_id_obj_b = register(dclr_a_update)
     assert iscc_id_obj_a == iscc_id_obj_b
-    assert iscc_id_obj_b.iscc_id_declarations.count() == 2
-    assert iscc_id_obj_b.meta_url.startswith("ipfs://")
-    assert models.IsccIdModel.objects.filter(iscc_id=iscc_id_obj_a.iscc_id).count() == 1
+    assert iscc_id_obj_b.declarations.count() == 2
+    assert iscc_id_obj_b.declarations.latest().meta_url.startswith("ipfs://")
 
 
-def test_declaration_freeze(db, dclr_a):
-    dclr_a.data = b"\x01".hex()
-    iscc_id_obj = models.DeclarationModel.register(dclr_a)
+def test_declaration_freeze(db, dclr_a, dclr_a_update):
+    dclr_a.message = "frz:"
+    iscc_id_obj = register(dclr_a)
     assert iscc_id_obj.iscc_id == "MIAKOP7RYAH5SVPN"
     assert iscc_id_obj.frozen is True
+    iscc_id_obj = register(dclr_a_update)
+    assert iscc_id_obj.iscc_id == "MIA2OP7RYAH5SVPNAE"
+    assert iscc_id_obj.frozen is False
