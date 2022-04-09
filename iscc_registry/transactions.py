@@ -1,6 +1,6 @@
 from iscc_registry.exceptions import RegistrationError
 from iscc_registry.schema import Declaration
-from iscc_registry.models import DeclarationModel, BlockModel, User, IsccCodeModel, IsccIdModel
+from iscc_registry.models import User, IsccIdModel
 from django.db import transaction
 import iscc_core as ic
 
@@ -10,68 +10,56 @@ def register(d: Declaration) -> IsccIdModel:
     """Register an ISCC delcaration."""
 
     # check for duplicate
-    if DeclarationModel.objects.filter(chain_id=d.chain_id, tx_hash=d.tx_hash).exists():
-        raise RegistrationError(f"{d.chain_id}:{d.tx_hash} already registered")
+    if IsccIdModel.objects.filter(did=d.did).exists():
+        raise RegistrationError(f"Declaration {d.did} already registered")
 
     # initialize related objects
-
-    block_obj, created = BlockModel.objects.select_for_update().get_or_create(
-        chain_id=d.chain_id,
-        block=d.block_id,
-        hash=d.block_hash,
-    )
-
     user_obj_declarer = User.get_or_create(wallet=d.declarer, group="declarer")
-
     user_obj_registrar = None
     if d.registrar:
         user_obj_registrar = User.get_or_create(wallet=d.declarer, group="registrar")
 
-    iscc_code_obj, created = IsccCodeModel.objects.select_for_update().get_or_create(
-        code=d.iscc_code
-    )
-
     # Mint ISCC-ID
     uc = 0
     while True:
-        candidate = d.iscc_id(uc=uc)
-        iscc_id_obj, created = IsccIdModel.objects.select_for_update().get_or_create(
-            iscc_id=candidate
+        candidate = d.get_iscc_id(uc=uc)
+        iid_obj = (
+            IsccIdModel.objects.filter(iscc_id=candidate)
+            .only("iscc_code", "owner", "frozen", "deleted")
+            .order_by("did")
+            .last()
         )
-
-        if not created:
+        if iid_obj:
             # ISCC-ID exists. Check if we can update
-            can_update = iscc_id_obj.owner.username == d.declarer
-            can_update = can_update and iscc_id_obj.frozen is False and iscc_id_obj.deleted is False
-            can_update = can_update and iscc_id_obj.iscc_code.code == d.iscc_code
+            can_update = iid_obj.owner.username == d.declarer
+            can_update = can_update and iid_obj.frozen is False and iid_obj.deleted is False
+            can_update = can_update and iid_obj.iscc_code == d.iscc_code
             if not can_update:
                 # Try the next ISCC-ID
                 uc += 1
                 continue
+        break
 
-        dclr_obj = DeclarationModel.objects.create(
-            time=d.time,
-            chain_id=d.chain_id,
-            block=block_obj,
-            tx_idx=d.tx_idx,
-            tx_hash=d.tx_hash,
-            declarer=user_obj_declarer,
-            message=d.message or None,
-            meta_url=d.meta_url,
-            registrar=user_obj_registrar,
-        )
-        dclr_obj.save()
-
-        # ISCC-ID is unique. Mint/Update and return!
-        iscc_id_obj.iscc_code = iscc_code_obj
-        iscc_id_obj.simhash = ic.alg_simhash_from_iscc_id(iscc_id_obj.iscc_id, d.declarer)
-        iscc_id_obj.owner = user_obj_declarer
-        iscc_id_obj.frozen = d.freeze
-        iscc_id_obj.deleted = d.delete
-        # Update revision for existing ISCC-ID
-        if not created:
-            iscc_id_obj.revision = iscc_id_obj.revision + 1
-        iscc_id_obj.save()
-        iscc_id_obj.declarations.add(dclr_obj)
-        iscc_id_obj.refresh_from_db()
-        return iscc_id_obj
+    # Create new IsccIdModel entry for declaration event
+    iid_obj = IsccIdModel(
+        did=d.did,
+        iscc_id=candidate,
+        iscc_code=d.iscc_code,
+        declarer=user_obj_declarer,
+        meta_url=d.meta_url or None,
+        message=d.message or None,
+        timestamp=d.timestamp,
+        owner=user_obj_declarer,
+        chain_id=d.chain_id,
+        block_height=d.block_height,
+        block_hash=d.block_hash,
+        tx_idx=d.tx_idx,
+        tx_hash=d.tx_hash,
+        registrar=user_obj_registrar,
+        simhash=ic.alg_simhash_from_iscc_id(candidate, d.declarer),
+        frozen=d.freeze,
+        deleted=d.delete,
+        revision=IsccIdModel.objects.filter(iscc_id=candidate).count() + 1,
+    )
+    iid_obj.save(force_insert=True)
+    return iid_obj

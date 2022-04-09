@@ -1,8 +1,9 @@
-from datetime import datetime
 from typing import Optional
 from ninja import Schema
 from pydantic import Field
 import iscc_core as ic
+from bitarray import util
+from datetime import datetime
 
 
 API_VERSION = "0.1.0"
@@ -16,9 +17,9 @@ class API(Schema):
 
 class Declaration(Schema):
 
-    time: datetime = Field(..., description="Unix timestamp of block")
+    timestamp: datetime = Field(..., description="Unix timestamp of block")
     chain_id: int = Field(..., description="ID of source chain")
-    block_id: int = Field(..., description="Block height")
+    block_height: int = Field(..., description="Block height")
     block_hash: str = Field(..., description="Block hash")
     tx_idx: int = Field(..., description="Index of TX within block")
     tx_hash: str = Field(..., description="Hash of transaction")
@@ -35,21 +36,33 @@ class Declaration(Schema):
     meta_url: Optional[str] = Field(None, description="URL for ISCC Metadata")
     registrar: Optional[str] = Field(None, description="Wallet-Address of registrar")
 
-    def iscc_id(self, uc=0) -> str:
+    @property
+    def did(self):
+        """64-bit cross-chain, monotonic, and deterministic height"""
+        ts = util.int2ba(int(self.timestamp.timestamp()), length=36, endian="big", signed=False)
+        chain_id = util.int2ba(self.chain_id, length=14, endian="big", signed=False)
+        tx_idx = util.int2ba(self.tx_idx, length=14, endian="big", signed=False)
+        data = ts + chain_id + tx_idx
+        return util.ba2int(data, signed=False)
+
+    @property
+    def freeze(self) -> bool:
+        """Freeze declaration to disable updates"""
+        return self.message == "frz:"
+
+    @property
+    def delete(self) -> bool:
+        """Soft-Delete entry from registry"""
+        return self.message == "del:"
+
+    def get_iscc_id(self, uc=0) -> str:
+        """Calculate ISCC-ID with counter `uc`"""
         return ic.gen_iscc_id_v0(
             iscc_code=self.iscc_code,
             chain_id=self.chain_id,
             wallet=self.declarer,
             uc=uc,
         )["iscc"].lstrip("ISCC:")
-
-    @property
-    def freeze(self) -> bool:
-        return self.message == "frz:"
-
-    @property
-    def delete(self) -> bool:
-        return self.message == "del:"
 
 
 # class Declaration(Schema):

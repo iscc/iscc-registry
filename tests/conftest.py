@@ -13,9 +13,9 @@ def django_db_setup(django_db_setup, django_db_blocker):
 @pytest.fixture
 def dclr_a():
     return schema.Declaration(
-        time=1649008119,
+        timestamp=1649008119,
         chain_id=2,
-        block_id=14514543,
+        block_height=14514543,
         block_hash="0x60735e41758bd8f411117ac7f20ef3779c35ab9c9c2e4f5c70c87d4d73979f05",
         tx_idx=0,
         tx_hash="0xcade12c2cba31fbbfeddd1df932388dcd1c43fa346e233e34915dc3694546f3a",
@@ -27,9 +27,9 @@ def dclr_a():
 @pytest.fixture
 def dclr_a_update():
     return schema.Declaration(
-        time=1649008120,
+        timestamp=1649008120,
         chain_id=2,
-        block_id=14514543,
+        block_height=14514543,
         block_hash="0x60735e41758bd8f411117ac7f20ef3779c35ab9c9c2e4f5c70c87d4d73979f06",
         tx_idx=1,
         tx_hash="0xcade12c2cba31fbbfeddd1df932388dcd1c43fa346e233e34915dc3694546f3b",

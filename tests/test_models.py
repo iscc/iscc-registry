@@ -26,12 +26,14 @@ def test_declaration_register(db, dclr_a):
 
 
 def test_declaration_update(db, dclr_a, dclr_a_update):
-    iscc_id_obj_a = register(dclr_a)
-    assert iscc_id_obj_a.declarations.latest().meta_url is None
-    iscc_id_obj_b = register(dclr_a_update)
-    assert iscc_id_obj_a == iscc_id_obj_b
-    assert iscc_id_obj_b.declarations.count() == 2
-    assert iscc_id_obj_b.declarations.latest().meta_url.startswith("ipfs://")
+    iid_a = register(dclr_a)
+    assert iid_a.meta_url is None
+    iid_b = register(dclr_a_update)
+    assert iid_a.iscc_id == iid_b.iscc_id
+    assert iid_a.did != iid_b.did
+    iid_query = models.IsccIdModel.objects.filter(iscc_id=iid_a.iscc_id)
+    assert iid_query.count() == 2
+    assert iid_query.latest().meta_url.startswith("ipfs://")
 
 
 def test_declaration_freeze(db, dclr_a, dclr_a_update):

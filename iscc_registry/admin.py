@@ -2,9 +2,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.db.models import JSONField
 from django_json_widget.widgets import JSONEditorWidget
-
 from iscc_registry import models
-from django.db.models.expressions import F
+
 
 admin.site.register(models.User, UserAdmin)
 
@@ -20,51 +19,30 @@ class ChainAdmin(admin.ModelAdmin):
         return obj.chain
 
 
-@admin.register(models.IsccCodeModel)
-class IsccCodeAdmin(admin.ModelAdmin):
-    pass
-
-
 @admin.register(models.IsccIdModel)
 class IsccIDAdmin(admin.ModelAdmin):
     actions = None
     list_per_page = 20
-    # list_filter = [
-    #     "chain",
-    # ]
     search_fields = [
         "=iscc_id",
         "@iscc_code",
     ]
     list_display = [
+        "did",
         "iscc_id",
-        "simhash",
+        "chain",
         "iscc_code",
         "owner",
+        "admin_time",
         "revision",
     ]
 
+    formfield_overrides = {
+        JSONField: {
+            "widget": JSONEditorWidget(width="53em", height="18em", options={"mode": "view"})
+        },
+    }
 
-@admin.register(models.BlockModel)
-class BlockAdmin(admin.ModelAdmin):
-    list_display = ("chain", "block", "hash")
-    list_filter = ("chain",)
-
-
-@admin.register(models.DeclarationModel)
-class DeclarationAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "iscc_id",
-        "admin_time",
-        "chain",
-        "block",
-        "tx_idx",
-        "declarer",
-        "meta_url",
-        "registrar",
-    )
-
-    @admin.display(ordering="time", description="time")
+    @admin.display(ordering="timestamp", description="timestamp")
     def admin_time(self, obj):
-        return obj.time.strftime("%Y-%m-%d %H:%M:%S")
+        return obj.timestamp.strftime("%Y-%m-%d %H:%M:%S")
