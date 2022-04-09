@@ -1,3 +1,5 @@
+from typing import Optional
+
 from django.contrib.auth.models import AbstractUser, Group
 from django.db import models
 from django.db.models import Q
@@ -216,6 +218,21 @@ class IsccIdModel(models.Model):
         default=0,
         help_text="Number of times updated",
     )
+
+    @staticmethod
+    def get_safe(iscc_id: str):
+        """Ensure only the active and non-deleted ISCC-ID is returned"""
+        return IsccIdModel.objects.get(iscc_id=iscc_id, active=True, deleted=False)
+
+    def ancestor(self) -> Optional["IsccIdModel"]:
+        """Return previous declaration for this ISCC-ID if existent"""
+        return (
+            IsccIdModel.objects.filter(iscc_id=self.iscc_id)
+            .exclude(did=self.did)
+            .only("did", "active")
+            .order_by("did")
+            .last()
+        )
 
     def __str__(self):
         return f"ISCC:{self.iscc_id}"

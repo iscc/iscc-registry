@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 import pytest
+from django.db import IntegrityError
+
 from iscc_registry.exceptions import RegistrationError
 from iscc_registry import models
-from iscc_registry.transactions import register
+from iscc_registry.transactions import register, reset
 
 
 wallet_a = "0x1ad91ee08f21be3de0ba2ba6918e714da6b45836"
@@ -18,14 +20,14 @@ def test_user_get_or_create(db):
     assert user == user2
 
 
-def test_declaration_register(db, dclr_a):
+def test_register(db, dclr_a):
     iscc_id_obj = register(dclr_a)
     assert iscc_id_obj.iscc_id == "MIAKOP7RYAH5SVPN"
     with pytest.raises(RegistrationError):
         register(dclr_a)
 
 
-def test_declaration_update(db, dclr_a, dclr_a_update):
+def test_register_update(db, dclr_a, dclr_a_update):
     iid_a = register(dclr_a)
     assert iid_a.active is True
     assert iid_a.meta_url is None
@@ -37,6 +39,29 @@ def test_declaration_update(db, dclr_a, dclr_a_update):
     iid_query = models.IsccIdModel.objects.filter(iscc_id=iid_a.iscc_id)
     assert iid_query.count() == 2
     assert iid_query.latest().meta_url.startswith("ipfs://")
+
+
+def test_iscc_id_model_ancestor(db, dclr_a, dclr_a_update):
+    iid_a = register(dclr_a)
+    iid_b = register(dclr_a_update)
+    assert iid_b.ancestor().did == iid_a.did
+
+
+def test_reset(db, dclr_a, dclr_a_update):
+    iid_a = register(dclr_a)
+    assert iid_a.active is True
+    iid_b = register(dclr_a_update)
+    iid_a.refresh_from_db()
+    assert iid_a.active is False
+    reset(iid_b.block_hash)
+    assert models.IsccIdModel.objects.count() == 1
+    iid_a.refresh_from_db()
+    assert iid_a.active is True
+
+
+def test_reset_raises(db, dclr_a, dclr_a_update):
+    with pytest.raises(IntegrityError):
+        reset(block_hash="a")
 
 
 def test_declaration_freeze(db, dclr_a, dclr_a_update):

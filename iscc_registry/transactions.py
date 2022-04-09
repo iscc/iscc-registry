@@ -51,7 +51,7 @@ def register(d: Declaration) -> IsccIdModel:
         break
 
     # Create new IsccIdModel entry for declaration event
-    iid_obj = IsccIdModel(
+    new_iid_obj = IsccIdModel(
         did=d.did,
         iscc_id=candidate,
         iscc_code=d.iscc_code,
@@ -71,5 +71,25 @@ def register(d: Declaration) -> IsccIdModel:
         deleted=d.delete,
         revision=IsccIdModel.objects.filter(iscc_id=candidate).count() + 1,
     )
-    iid_obj.save(force_insert=True)
-    return iid_obj
+    new_iid_obj.save(force_insert=True)
+    return new_iid_obj
+
+
+@transaction.atomic
+def reset(block_hash: str):
+    """Reset event history to before `block_hash` in case of a fork."""
+    start_obj = IsccIdModel.objects.filter(block_hash=block_hash).order_by("did").first()
+    if start_obj is None:
+        raise IntegrityError(f"No declaration found for block {block_hash}")
+
+    # Select events from all chains for backwards iteration to have consistent state
+    stale_qs = (
+        IsccIdModel.objects.filter(did__gte=start_obj.did).order_by("-did").only("did", "active")
+    )
+    stale_qs.update(active=False)
+    for stale_obj in stale_qs:
+        anc = stale_obj.ancestor()
+        if anc:
+            anc.active = True
+            anc.save()
+        stale_obj.delete()
