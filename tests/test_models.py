@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import pytest
-
 from iscc_registry.exceptions import RegistrationError
 from iscc_registry import models
 from iscc_registry.transactions import register
+
 
 wallet_a = "0x1ad91ee08f21be3de0ba2ba6918e714da6b45836"
 
@@ -27,8 +27,11 @@ def test_declaration_register(db, dclr_a):
 
 def test_declaration_update(db, dclr_a, dclr_a_update):
     iid_a = register(dclr_a)
+    assert iid_a.active is True
     assert iid_a.meta_url is None
     iid_b = register(dclr_a_update)
+    iid_a.refresh_from_db()
+    assert iid_a.active is False
     assert iid_a.iscc_id == iid_b.iscc_id
     assert iid_a.did != iid_b.did
     iid_query = models.IsccIdModel.objects.filter(iscc_id=iid_a.iscc_id)

@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser, Group
 from django.db import models
+from django.db.models import Q
 
 
 class User(AbstractUser):
@@ -72,11 +73,22 @@ class IsccIdModel(models.Model):
         verbose_name = "ISCC-ID"
         verbose_name_plural = "ISCC-IDs"
         get_latest_by = "did"
+        constraints = [
+            models.UniqueConstraint(
+                name="unique_active_iscc_id",
+                fields=["iscc_id", "active"],
+                condition=Q(active=True),
+            )
+        ]
 
     did = models.PositiveBigIntegerField(
         verbose_name="xcid",
         primary_key=True,
         help_text="Cross-Chain time-ordered unique Declaration-ID",
+    )
+
+    active = models.BooleanField(
+        verbose_name="active", default=True, help_text="Whether the ISCC-ID is active"
     )
 
     iscc_id = models.CharField(

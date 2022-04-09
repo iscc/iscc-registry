@@ -1,7 +1,7 @@
 from iscc_registry.exceptions import RegistrationError
 from iscc_registry.schema import Declaration
 from iscc_registry.models import User, IsccIdModel
-from django.db import transaction
+from django.db import transaction, IntegrityError
 import iscc_core as ic
 
 
@@ -9,9 +9,12 @@ import iscc_core as ic
 def register(d: Declaration) -> IsccIdModel:
     """Register an ISCC delcaration."""
 
-    # check for duplicate
-    if IsccIdModel.objects.filter(did=d.did).exists():
-        raise RegistrationError(f"Declaration {d.did} already registered")
+    # check for integirty
+    qs = IsccIdModel.objects.filter(did__gte=d.did, chain_id=d.chain_id).only("did").order_by("did")
+    for obj in qs:
+        if obj.did == d.did:
+            raise RegistrationError(f"Declaration {d.did} already registered")
+        raise RegistrationError(f"Found later declaration {obj.did} than {d.did}")
 
     # initialize related objects
     user_obj_declarer = User.get_or_create(wallet=d.declarer, group="declarer")
@@ -30,7 +33,10 @@ def register(d: Declaration) -> IsccIdModel:
             .last()
         )
         if iid_obj:
-            # ISCC-ID exists. Check if we can update
+            # ISCC-ID exists. It should be active.
+            if iid_obj.active is False:
+                raise IntegrityError(f"Latest {iid_obj.iscc_id} is not active")
+            # Check if we can update
             can_update = iid_obj.owner.username == d.declarer
             can_update = can_update and iid_obj.frozen is False and iid_obj.deleted is False
             can_update = can_update and iid_obj.iscc_code == d.iscc_code
@@ -38,6 +44,10 @@ def register(d: Declaration) -> IsccIdModel:
                 # Try the next ISCC-ID
                 uc += 1
                 continue
+            else:
+                # Deactivate
+                iid_obj.active = False
+                iid_obj.save()
         break
 
     # Create new IsccIdModel entry for declaration event
