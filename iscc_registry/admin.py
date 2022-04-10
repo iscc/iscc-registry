@@ -35,6 +35,7 @@ class IsccIDAdmin(admin.ModelAdmin):
         "owner",
         "admin_time",
         "revision",
+        "active",
     ]
 
     formfield_overrides = {
