@@ -298,7 +298,7 @@ python-versions = "*"
 
 [[package]]
 name = "iscc-core"
-version = "0.2.4"
+version = "0.2.5"
 description = "ISCC - Core Algorithms"
 category = "main"
 optional = false
@@ -310,6 +310,7 @@ bases = ">=0.2,<0.3"
 bitarray-hardbyte = "*"
 blake3 = "*"
 data-url = ">=1.0,<2.0"
+jcs = ">=0.2.0,<0.3.0"
 loguru = ">=0.6,<0.7"
 more-itertools = "*"
 pybase64 = "*"
@@ -322,11 +323,11 @@ turbo = ["cython"]
 
 [[package]]
 name = "jcs"
-version = "0.2.0"
-description = "JSC - JSON Canonicalization"
+version = "0.2.1"
+description = "JCS - JSON Canonicalization"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.6.2"
 
 [[package]]
 name = "loguru"
@@ -856,11 +857,11 @@ iniconfig = [
     {file = "iniconfig-1.1.1.tar.gz", hash = "sha256:bc3af051d7d14b2ee5ef9969666def0cd1a000e121eaea580d4a313df4b37f32"},
 ]
 iscc-core = [
-    {file = "iscc-core-0.2.4.tar.gz", hash = "sha256:797f0db01414e055e62a7df0efa2a171534b209cb4380cc53e6bc2815b64c016"},
+    {file = "iscc-core-0.2.5.tar.gz", hash = "sha256:e6ee9ea3725d71701ff38f6f0c365f95ac9277df63d7054e3bf4382806487408"},
 ]
 jcs = [
-    {file = "jcs-0.2.0-py3-none-any.whl", hash = "sha256:e5720fdc96ed811d9824faddd0d8a56e8676c8e1a43d150be43d36b0f805fdbf"},
-    {file = "jcs-0.2.0.tar.gz", hash = "sha256:28e385a059b1cf92355a9f0403ad180beae9c98b29872777b56508567459e445"},
+    {file = "jcs-0.2.1-py3-none-any.whl", hash = "sha256:e23a3e1de60f832d33cd811bb9c3b3be79219cdf95f63b88f0972732c3fa8476"},
+    {file = "jcs-0.2.1.tar.gz", hash = "sha256:9f20360b2f3b0a410d65493b448f96306d80e37fb46283f3f4aa5db2c7c1472b"},
 ]
 loguru = [
     {file = "loguru-0.6.0-py3-none-any.whl", hash = "sha256:4e2414d534a2ab57573365b3e6d0234dfb1d84b68b7f3b948e6fb743860a77c3"},

@@ -133,11 +133,11 @@ gunicorn==20.1.0; python_version >= "3.5" \
     --hash=sha256:e0a968b5ba15f8a328fdfd7ab1fcb5af4470c28aaf7e55df02a99bc13138e6e8
 huey==2.4.3 \
     --hash=sha256:4fa2f6055d581778c3bcf93fc8c9ce87aecc2a345d5ff35bd955da152c02ef37
-iscc-core==0.2.4; python_version >= "3.7" and python_version < "4.0" \
-    --hash=sha256:797f0db01414e055e62a7df0efa2a171534b209cb4380cc53e6bc2815b64c016
-jcs==0.2.0; python_version >= "3.6" \
-    --hash=sha256:e5720fdc96ed811d9824faddd0d8a56e8676c8e1a43d150be43d36b0f805fdbf \
-    --hash=sha256:28e385a059b1cf92355a9f0403ad180beae9c98b29872777b56508567459e445
+iscc-core==0.2.5; python_version >= "3.7" and python_version < "4.0" \
+    --hash=sha256:e6ee9ea3725d71701ff38f6f0c365f95ac9277df63d7054e3bf4382806487408
+jcs==0.2.1; python_full_version >= "3.6.2" \
+    --hash=sha256:e23a3e1de60f832d33cd811bb9c3b3be79219cdf95f63b88f0972732c3fa8476 \
+    --hash=sha256:9f20360b2f3b0a410d65493b448f96306d80e37fb46283f3f4aa5db2c7c1472b
 loguru==0.6.0; python_version >= "3.5" \
     --hash=sha256:4e2414d534a2ab57573365b3e6d0234dfb1d84b68b7f3b948e6fb743860a77c3 \
     --hash=sha256:066bd06758d0a513e9836fd9c6b5a75bfb3fd36841f4b996bc60b547a309d41c
