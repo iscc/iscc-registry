@@ -1,19 +1,14 @@
 """Load some demo data for testing."""
-import os
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "iscc_registry.settings")
-import django
-
-django.setup()
+import iscc_registry.init
 from iscc_registry import schema
 from iscc_registry.transactions import register
 
 
 def load():
     a = schema.Declaration(
-        time=1649008119,
+        timestamp=1649008119,
         chain_id=2,
-        block_id=14514543,
+        block_height=14514543,
         block_hash="0xaa735e41758bd8f411117ac7f20ef3779c35ab9c9c2e4f5c70c87d4d73979f05",
         tx_idx=0,
         tx_hash="0xaade12c2cba31fbbfeddd1df932388dcd1c43fa346e233e34915dc3694546f3a",
@@ -23,9 +18,9 @@ def load():
     iscc_id_obj_a = register(a)
 
     b = schema.Declaration(
-        time=1649009000,
+        timestamp=1649009000,
         chain_id=2,
-        block_id=14514544,
+        block_height=14514544,
         block_hash="0xbb735e41758bd8f411117ac7f20ef3779c35ab9c9c2e4f5c70c87d4d73979f06",
         tx_idx=0,
         tx_hash="0xbbde12c2cba31fbbfeddd1df932388dcd1c43fa346e233e34915dc3694546f3b",
@@ -36,9 +31,9 @@ def load():
     iscc_id_obj_b = register(b)
 
     c = schema.Declaration(
-        time=1649009900,
+        timestamp=1649009900,
         chain_id=2,
-        block_id=14514544,
+        block_height=14514544,
         block_hash="0xbb735e41758bd8f411117ac7f20ef3779c35ab9c9c2e4f5c70c87d4d73979f06",
         tx_idx=0,
         tx_hash="0xccde12c2cba31fbbfeddd1df932388dcd1c43fa346e233e34915dc3694546f3b",
