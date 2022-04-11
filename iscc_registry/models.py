@@ -1,5 +1,4 @@
 from typing import Optional
-
 from django.contrib.auth.models import AbstractUser, Group
 from django.db import models
 from django.db.models import Q
@@ -84,7 +83,7 @@ class IsccIdModel(models.Model):
         ]
 
     did = models.PositiveBigIntegerField(
-        verbose_name="xcid",
+        verbose_name="did",
         primary_key=True,
         help_text="Cross-Chain time-ordered unique Declaration-ID",
     )
