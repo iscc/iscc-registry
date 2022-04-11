@@ -1,15 +1,20 @@
 """Load some demo data for testing."""
-import iscc_registry.init
-from iscc_registry import schema
+from iscc_registry import init
+
+init.init()
 from iscc_registry.transactions import register
 from dev.fake import Fake
 
 
 def load(n):
+    objects = []
+    f = Fake()
     for _ in range(n):
-        obj = register(Fake.declaration)
-        print(obj)
+        obj = register(f.declaration)
+        objects.append(obj)
+    return objects
 
 
 if __name__ == "__main__":
-    load(1000)
+
+    load(10)
