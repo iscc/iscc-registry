@@ -1,7 +1,7 @@
 import pytest
 from iscc_registry import schema
-
 from django.core.management import call_command
+from dev.load import load
 
 
 @pytest.fixture(scope="session")
@@ -37,3 +37,8 @@ def dclr_a_update():
         iscc_code="KACT4EBWK27737D2AYCJRAL5Z36G76RFRMO4554RU26HZ4ORJGIVHDI",
         meta_url="ipfs://bafybeihcck6iocb2steuf4zwq53nfyce34xamke5za7gaq2qqoshmgab6u",
     )
+
+
+@pytest.fixture
+def db_data(db):
+    load(10)
