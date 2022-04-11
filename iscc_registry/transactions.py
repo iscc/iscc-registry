@@ -1,5 +1,5 @@
 from iscc_registry.exceptions import RegistrationError
-from iscc_registry.schema import Declaration
+from iscc_registry.schema import Declaration, Head
 from iscc_registry.models import User, IsccIdModel
 from django.db import transaction, IntegrityError
 import iscc_core as ic
@@ -76,7 +76,7 @@ def register(d: Declaration) -> IsccIdModel:
 
 
 @transaction.atomic
-def reset(block_hash: str):
+def rollback(block_hash: str):
     """Reset event history to before `block_hash` in case of a fork."""
     start_obj = IsccIdModel.objects.filter(block_hash=block_hash).order_by("did").first()
     if start_obj is None:
@@ -93,3 +93,6 @@ def reset(block_hash: str):
             anc.active = True
             anc.save()
         stale_obj.delete()
+
+    new_head = IsccIdModel.objects.filter(chain_id=start_obj.chain_id).order_by("did").last()
+    return Head.from_orm(new_head)

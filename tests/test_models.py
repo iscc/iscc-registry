@@ -4,7 +4,7 @@ from django.db import IntegrityError
 
 from iscc_registry.exceptions import RegistrationError
 from iscc_registry import models
-from iscc_registry.transactions import register, reset
+from iscc_registry.transactions import register, rollback
 
 
 wallet_a = "0x1ad91ee08f21be3de0ba2ba6918e714da6b45836"
@@ -47,21 +47,21 @@ def test_iscc_id_model_ancestor(db, dclr_a, dclr_a_update):
     assert iid_b.ancestor().did == iid_a.did
 
 
-def test_reset(db, dclr_a, dclr_a_update):
+def test_rollback(db, dclr_a, dclr_a_update):
     iid_a = register(dclr_a)
     assert iid_a.active is True
     iid_b = register(dclr_a_update)
     iid_a.refresh_from_db()
     assert iid_a.active is False
-    reset(iid_b.block_hash)
+    rollback(iid_b.block_hash)
     assert models.IsccIdModel.objects.count() == 1
     iid_a.refresh_from_db()
     assert iid_a.active is True
 
 
-def test_reset_raises(db, dclr_a, dclr_a_update):
+def test_rollback_raises(db, dclr_a, dclr_a_update):
     with pytest.raises(IntegrityError):
-        reset(block_hash="a")
+        rollback(block_hash="a")
 
 
 def test_declaration_freeze(db, dclr_a, dclr_a_update):
