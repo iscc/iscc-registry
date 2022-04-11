@@ -1,9 +1,10 @@
 from typing import Optional
-from ninja import Schema
+from ninja import Schema, ModelSchema
 from pydantic import Field
 import iscc_core as ic
 from bitarray import util
 from datetime import datetime
+from iscc_registry.models import IsccIdModel
 
 
 API_VERSION = "0.1.0"
@@ -65,47 +66,20 @@ class Declaration(Schema):
         )["iscc"].lstrip("ISCC:")
 
 
-# class Declaration(Schema):
-#     chain: str
-#     declarer: str
-#     iscc_code: str
-#     block_height: int
-#     block_hash: str
-#     tx_hash: str
-#     timestamp: float
-#     tx_out_idx: int = 0
-#     data: Optional[str] = None
-#     meta_url: Optional[str] = None
-#     registrar: Optional[str] = None
-#
-#     def get_id(self) -> int:
-#         """Create monotonicaly increasing flake id from timestamp"""
-#         return ic.Flake(ts=self.timestamp, bits=64).int
-#
-#     @property
-#     def freeze(self) -> bool:
-#         return self.data == b"\x01".hex()
-#
-#     @property
-#     def delete(self) -> bool:
-#         return self.data == b"\x02".hex()
-#
-#     @property
-#     def chain_id(self):
-#         chainmap = {
-#             "BITCOIN": 1,
-#             "ETHEREUM": 2,
-#             "POLYGON": 3,
-#         }
-#         return chainmap[self.chain]
-#
-#     def iscc_id(self, uc=0) -> str:
-#         return ic.gen_iscc_id_v0(
-#             iscc_code=self.iscc_code,
-#             chain_id=self.chain_id,
-#             wallet=self.declarer,
-#             uc=uc,
-#         )["iscc"].lstrip("ISCC:")
+class Head(ModelSchema):
+    class Config:
+        model = IsccIdModel
+        model_fields = ["chain", "block_height", "block_hash", "tx_idx", "tx_hash", "timestamp"]
+
+
+class RegistrationResponse(ModelSchema):
+    class Config:
+        model = IsccIdModel
+        model_fields = ["did", "iscc_id"]
+
+
+class Message(Schema):
+    message: str
 
 
 class DeclarationResponse(Schema):
