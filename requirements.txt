@@ -123,6 +123,9 @@ django-json-widget==1.1.1 \
 django-ninja==0.17.0; python_version >= "3.6" \
     --hash=sha256:f6e80cbfd67de0c6fbf8fa2948f194a1ac375b67c43d6a79808d325abba94eb5 \
     --hash=sha256:31a5c040a36c620deb4c20731c094540e3245a7b885a7f9d28e85098886595fc
+django-public-admin==0.0.5; python_version >= "3.6" and python_version < "4.0" \
+    --hash=sha256:24be0abbe47b8aa6dad18ffe0ca4973a85f59dceca1cc9d307be605d5bfca03d \
+    --hash=sha256:6bd9915e4250a0ccbacb7035ef30ae0e2c1dad04897d7d3b2235176a64a8dcb9
 django==4.0.3; python_version >= "3.8" \
     --hash=sha256:1239218849e922033a35d2a2f777cb8bee18bd725416744074f455f34ff50d0c \
     --hash=sha256:77ff2e7050e3324c9b67e29b6707754566f58514112a9ac73310f60cd5261930

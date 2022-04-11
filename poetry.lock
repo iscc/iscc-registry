@@ -255,6 +255,17 @@ doc = ["mkdocs", "mkdocs-material", "markdown-include"]
 test = ["pytest", "pytest-cov", "pytest-django", "pytest-asyncio", "black", "isort", "flake8", "mypy (==0.930)", "django-stubs"]
 
 [[package]]
+name = "django-public-admin"
+version = "0.0.5"
+description = "A public read-only version of the Django Admin"
+category = "main"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+django = ">=2"
+
+[[package]]
 name = "future"
 version = "0.18.2"
 description = "Clean single-source support for Python 3 and 2"
@@ -656,7 +667,7 @@ python-versions = ">=3.6"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<4.0"
-content-hash = "8eadca27fa9fb15a5ae53349bb23cee69946c4670a2e40fb2ea05c1fe37d9642"
+content-hash = "ca4122e8b44c533063fe0a62716502904d90ff67991e351af701f553779ffb7b"
 
 [metadata.files]
 asgiref = [
@@ -841,6 +852,10 @@ django-json-widget = [
 django-ninja = [
     {file = "django-ninja-0.17.0.tar.gz", hash = "sha256:f6e80cbfd67de0c6fbf8fa2948f194a1ac375b67c43d6a79808d325abba94eb5"},
     {file = "django_ninja-0.17.0-py3-none-any.whl", hash = "sha256:31a5c040a36c620deb4c20731c094540e3245a7b885a7f9d28e85098886595fc"},
+]
+django-public-admin = [
+    {file = "django-public-admin-0.0.5.tar.gz", hash = "sha256:24be0abbe47b8aa6dad18ffe0ca4973a85f59dceca1cc9d307be605d5bfca03d"},
+    {file = "django_public_admin-0.0.5-py3-none-any.whl", hash = "sha256:6bd9915e4250a0ccbacb7035ef30ae0e2c1dad04897d7d3b2235176a64a8dcb9"},
 ]
 future = [
     {file = "future-0.18.2.tar.gz", hash = "sha256:b1bead90b70cf6ec3f0710ae53a525360fa360d306a86583adc6bf83a4db537d"},

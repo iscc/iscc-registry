@@ -23,8 +23,9 @@ ALLOWED_HOSTS = env("ALLOWED_HOSTS")
 AUTH_USER_MODEL = "iscc_registry.User"
 
 INSTALLED_APPS = [
-    "admin_interface",
     "colorfield",
+    "public_admin",
+    "admin_interface",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
