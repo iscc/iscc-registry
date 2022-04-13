@@ -355,7 +355,7 @@ python-versions = "*"
 
 [[package]]
 name = "iscc-core"
-version = "0.2.5"
+version = "0.2.6"
 description = "ISCC - Core Algorithms"
 category = "main"
 optional = false
@@ -760,7 +760,7 @@ python-versions = ">=3.6"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<4.0"
-content-hash = "3d666ea797c61e9886b1ee41506e5960735b8edfd879e29bfee13f6935b66d0e"
+content-hash = "dd4c352d0f21a314ede60a755527b5a5e29c7e0ad83276c98009a66f9961ee7c"
 
 [metadata.files]
 asgiref = [
@@ -985,7 +985,8 @@ iniconfig = [
     {file = "iniconfig-1.1.1.tar.gz", hash = "sha256:bc3af051d7d14b2ee5ef9969666def0cd1a000e121eaea580d4a313df4b37f32"},
 ]
 iscc-core = [
-    {file = "iscc-core-0.2.5.tar.gz", hash = "sha256:e6ee9ea3725d71701ff38f6f0c365f95ac9277df63d7054e3bf4382806487408"},
+    {file = "iscc-core-0.2.6.tar.gz", hash = "sha256:098224181a231312165ce59333200c278379d98c378c7afd327b830b427f9433"},
+    {file = "iscc_core-0.2.6-py3-none-any.whl", hash = "sha256:cce4f01294a1eb284b356ff7d9350ec73695ff981544fba9a1a7fe02782b2ee0"},
 ]
 jcs = [
     {file = "jcs-0.2.1-py3-none-any.whl", hash = "sha256:e23a3e1de60f832d33cd811bb9c3b3be79219cdf95f63b88f0972732c3fa8476"},
