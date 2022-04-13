@@ -1,4 +1,7 @@
 """Fake data generator for testing"""
+from iscc_registry.init import init
+
+init()
 import iscc_core as ic
 import random
 from blake3 import blake3
@@ -93,12 +96,13 @@ class Fake:
 
 
 def main():
-    from pprint import pp
-
     for x in range(1):
-        pp(Fake().declaration.dict())
+        dec = Fake().declaration
+        dec.meta_url = "ipfs://bafkreiauxird7hexwesjlxfec57ecwaua7doqsodxzstixmhegrzulkjui"
+        print(dec.json(indent=2))
 
 
 if __name__ == "__main__":
+
     main()
     main()

@@ -10,6 +10,7 @@ env = environ.Env(
     REDIS_URL=(str, "redis://localhost:6379/?db=1"),
     ALLOWED_HOSTS=(list, ["*"]),
     OBSERVER_TOKEN=(str, "observer-token"),
+    IPFS_GATEWAY=(str, "https://ipfs.iscc.id/ipfs/"),
 )
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -34,6 +35,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_json_widget",
+    "django_simple_task",
     "huey.contrib.djhuey",
     "iscc_registry",
 ]
@@ -113,3 +115,4 @@ HUEY = {
 
 # Access token for observers
 OBSERVER_TOKEN = env("OBSERVER_TOKEN")
+IPFS_GATEWAY = env("IPFS_GATEWAY")

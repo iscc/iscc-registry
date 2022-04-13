@@ -11,6 +11,7 @@
 from typing import Optional, Any
 from django.http import HttpRequest
 from django.shortcuts import redirect
+from django_simple_task import defer
 from ninja import NinjaAPI
 from ninja.errors import HttpError
 
@@ -22,6 +23,8 @@ from iscc_registry.schema import Head, Message, RegistrationResponse, Declaratio
 from iscc_registry.transactions import rollback, register
 from ninja.security import HttpBearer
 import iscc_core as ic
+
+from iscc_registry.tasks import fetch_metadata
 
 
 class ObserverAuth(HttpBearer):
@@ -74,7 +77,9 @@ def head(request, chain_id: int):
 def register_(request, declartion: Declaration):
     """Register an on-chain ISCC-Declaration for ISCC-ID minting."""
     try:
-        return 201, register(declartion)
+        iid_obj = register(declartion)
+        defer(fetch_metadata, arguments={"args": [iid_obj.did]})
+        return 201, iid_obj
     except RegistrationError as e:
         return 422, Message(message=str(e))
 

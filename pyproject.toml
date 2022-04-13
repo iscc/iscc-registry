@@ -23,6 +23,9 @@ django-admin-interface = "^0.19.0"
 huey = "^2.4.3"
 redis = "^4.2.2"
 django-public-admin = "^0.0.5"
+django-simple-task = "^0.1.2"
+uvicorn = "^0.17.6"
+requests = "^2.27.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1"
@@ -41,6 +44,7 @@ load = { cmd = "poetry run python -m dev.load", help = "Load some test data"}
 format = { cmd = "poetry run black .", help = "Code style formating with black" }
 test = { cmd = "poetry run pytest", help = "Run tests" }
 reqs = { cmd = "poetry export -f requirements.txt --output requirements.txt", help = "Update requirements.txt"}
+run = { cmd = "uvicorn iscc_registry.asgi:application --reload"}
 all = ["reqs", "format", "test"]
 
 [tool.pytest.ini_options]
