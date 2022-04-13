@@ -9,6 +9,7 @@ env = environ.Env(
     DATABASE_URL=(str, "sqlite://:memory:"),
     REDIS_URL=(str, "redis://localhost:6379/?db=1"),
     ALLOWED_HOSTS=(list, ["*"]),
+    OBSERVER_TOKEN=(str, "observer-token"),
 )
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -109,3 +110,6 @@ HUEY = {
     "immediate_use_memory": env("DEBUG"),
     "immediate": env("DEBUG"),
 }
+
+# Access token for observers
+OBSERVER_TOKEN = env("OBSERVER_TOKEN")

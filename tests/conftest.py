@@ -1,7 +1,14 @@
 import pytest
+from ninja.testing import TestClient
 from iscc_registry import schema
 from django.core.management import call_command
 from dev.load import load
+from iscc_registry.api import api
+
+
+@pytest.fixture(scope="session")
+def api_client():
+    return TestClient(api)
 
 
 @pytest.fixture(scope="session")

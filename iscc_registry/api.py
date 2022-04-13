@@ -8,28 +8,57 @@
 ## Administrative features:
 - Allow chain observers to sync ISCC declarations to the registry.
 """
+from typing import Optional, Any
+from django.http import HttpRequest
 from django.shortcuts import redirect
 from ninja import NinjaAPI
 from ninja.errors import HttpError
+
+from iscc_registry import settings
 from iscc_registry.exceptions import RegistrationError
 from iscc_registry import schema as s
-import iscc_core as ic
 from iscc_registry.models import IsccIdModel
 from iscc_registry.schema import Head, Message, RegistrationResponse, Declaration
 from iscc_registry.transactions import rollback, register
+from ninja.security import HttpBearer
+import iscc_core as ic
+
+
+class ObserverAuth(HttpBearer):
+    def authenticate(self, request: HttpRequest, token: str) -> Optional[Any]:
+        if token == settings.OBSERVER_TOKEN:
+            return token
 
 
 api = NinjaAPI(
-    title="ISCC - Registry API",
-    version=s.API_VERSION,
-    description=__doc__,
+    title="ISCC - Registry API", version=s.API_VERSION, description=__doc__, auth=ObserverAuth()
 )
 
 
-@api.get("", tags=["public"], response=s.API)
+####################################################################################################
+# Public endpoints                                                                                 #
+####################################################################################################
+
+
+@api.get("", tags=["public"], response=s.API, auth=None)
 def index(request):
     """Returns current API information."""
     return {}
+
+
+@api.get("/resolve/{iscc}", tags=["public"], auth=None)
+def resolve(request, iscc: str):
+    try:
+        ic.iscc_validate(ic.iscc_normalize(iscc), strict=True)
+    except ValueError as e:
+        raise HttpError(400, str(e))
+
+    return redirect("https://example.com", permanent=False)
+
+
+####################################################################################################
+# Private observer endpoints                                                                       #
+####################################################################################################
 
 
 @api.get("/head/{chain_id}", tags=["observer"], response={200: Head, 404: Message})
@@ -54,13 +83,3 @@ def register_(request, declartion: Declaration):
 def rollback_(request, block_hash: str):
     """Rollback events to state before `block_hash`"""
     return rollback(block_hash)
-
-
-@api.get("/resolve/{iscc}", tags=["public"])
-def resolve(request, iscc: str):
-    try:
-        ic.iscc_validate(ic.iscc_normalize(iscc), strict=True)
-    except ValueError as e:
-        raise HttpError(400, str(e))
-
-    return redirect("https://example.com", permanent=False)
