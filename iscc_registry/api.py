@@ -14,7 +14,6 @@ from django.shortcuts import redirect
 from django_simple_task import defer
 from ninja import NinjaAPI
 from ninja.errors import HttpError
-
 from iscc_registry import settings
 from iscc_registry.exceptions import RegistrationError
 from iscc_registry import schema as s
@@ -23,7 +22,6 @@ from iscc_registry.schema import Head, Message, RegistrationResponse, Declaratio
 from iscc_registry.transactions import rollback, register
 from ninja.security import HttpBearer
 import iscc_core as ic
-
 from iscc_registry.tasks import fetch_metadata
 
 

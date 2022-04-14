@@ -1,7 +1,9 @@
 from typing import Optional
 from django.contrib.auth.models import AbstractUser, Group
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import Q
+from django.urls import reverse
 
 
 class User(AbstractUser):
@@ -222,6 +224,15 @@ class IsccIdModel(models.Model):
     def get_safe(iscc_id: str):
         """Ensure only the active and non-deleted ISCC-ID is returned"""
         return IsccIdModel.objects.get(iscc_id=iscc_id, active=True, deleted=False)
+
+    def get_admin_url(self):
+        content_type = ContentType.objects.get_for_model(self.__class__)
+        return reverse(
+            "admin:%s_%s_change" % (content_type.app_label, content_type.model), args=(self.did,)
+        )
+
+    def get_registry_url(self):
+        return self.get_admin_url().replace("dashboard", "registry")
 
     def ancestor(self) -> Optional["IsccIdModel"]:
         """Return previous declaration for this ISCC-ID if existent"""

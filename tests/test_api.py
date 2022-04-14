@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from dev.fake import Fake
+from dev.load import load
 from iscc_registry.models import IsccIdModel
 
 
@@ -18,7 +19,8 @@ def test_head_auth_and_empty(db, api_client):
     assert resp.json() == {"message": "No registrations found for chain"}
 
 
-def test_head(db_data, api_client):
+def test_head(db, api_client):
+    load(10)
     resp = api_client.get(f"/head/1", headers={"Authorization": "Bearer observer-token"})
     assert resp.status_code == 200
     assert resp.json() == {
@@ -39,7 +41,8 @@ def test_register(db, api_client):
     assert resp.json() == {"did": 330445058337719994, "iscc_id": "MMAPQQH7LKT6SMS2"}
 
 
-def test_register_duplicate_fails(db_data, api_client):
+def test_register_duplicate_fails(db, api_client):
+    load(10)
     dec = Fake().declaration
     api_client.post("/register", json=dec, headers={"Authorization": "Bearer observer-token"})
     resp = api_client.post(
@@ -49,7 +52,8 @@ def test_register_duplicate_fails(db_data, api_client):
     assert resp.json() == {"message": "Declaration 330445058337719994 already registered"}
 
 
-def test_rollback(db_data, api_client):
+def test_rollback(db, api_client):
+    load(10)
     resp = api_client.post(
         "/rollback/0x17f922af7f6650d2aaf11f7e6a434f7218b4e50eeeab62adb19dae2245077965",
         headers={"Authorization": "Bearer observer-token"},

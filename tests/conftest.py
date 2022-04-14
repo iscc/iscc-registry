@@ -46,6 +46,6 @@ def dclr_a_update():
     )
 
 
-@pytest.fixture
-def db_data(db):
-    load(10)
+# @pytest.fixture
+# def db_data(db):
+#     load(10)
