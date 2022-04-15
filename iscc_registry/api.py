@@ -9,6 +9,7 @@
 - Allow chain observers to sync ISCC declarations to the registry.
 """
 from typing import Optional, Any
+from django.db import IntegrityError
 from django.http import HttpRequest
 from django.shortcuts import redirect
 from django_simple_task import defer
@@ -55,6 +56,32 @@ def resolve(request, iscc: str):
         raise HttpError(400, str(e))
 
     return redirect("https://example.com", permanent=False)
+
+
+@api.post("/forecast", tags=["public"], response=s.Forecast, auth=None, exclude_none=True)
+def forecast(request, data: s.Forecast):
+    """Create ISCC-ID forecast from declaration data."""
+    candidate = ic.gen_iscc_id_v0(**data.dict(exclude_none=True))["iscc"].lstrip("ISCC:")
+    while True:
+        iid_obj = (
+            IsccIdModel.objects.filter(iscc_id=candidate)
+            .only("iscc_code", "owner", "frozen", "deleted")
+            .order_by("did")
+            .last()
+        )
+        if iid_obj:
+            # ISCC-ID exists. It should be active.
+            if iid_obj.active is False:
+                raise IntegrityError(f"Latest {iid_obj.iscc_id} is not active")
+            # Check if we can update
+            can_update = iid_obj.owner.username == data.wallet
+            can_update = can_update and iid_obj.frozen is False and iid_obj.deleted is False
+            can_update = can_update and iid_obj.iscc_code == data.iscc_code
+            if not can_update:
+                # Try the next ISCC-ID
+                candidate = ic.iscc_id_incr_v0(candidate)
+                continue
+        return s.Forecast(iscc_id=f"ISCC:{candidate}")
 
 
 ####################################################################################################

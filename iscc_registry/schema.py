@@ -66,16 +66,50 @@ class Declaration(Schema):
         )["iscc"].lstrip("ISCC:")
 
 
-class Head(ModelSchema):
-    class Config:
-        model = IsccIdModel
-        model_fields = ["chain", "block_height", "block_hash", "tx_idx", "tx_hash", "timestamp"]
-
-
 class RegistrationResponse(ModelSchema):
     class Config:
         model = IsccIdModel
         model_fields = ["did", "iscc_id"]
+
+
+class Forecast(Schema):
+
+    iscc_id: Optional[str] = Field(
+        None,
+        description="ISCC-ID",
+        example="ISCC:MMAOHZYGQLBASTFM",
+        max_length=73,
+        min_length=15,
+        regex="^ISCC:[A-Z2-7]{10,73}$",
+        readOnly=True,
+    )
+
+    chain_id: Optional[int] = Field(
+        None,
+        description="ID of source chain",
+        writeOnly=True,
+    )
+    wallet: Optional[str] = Field(
+        None,
+        description="Wallet-Address of original declaring party",
+        example="0x5ba91faf7a024204f7c1bd874da5e709d4713d60",
+        writeOnly=True,
+    )
+    iscc_code: Optional[str] = Field(
+        None,
+        description="ISCC-CODE",
+        example="KACYPXW445FTYNJ3CYSXHAFJMA2HUWULUNRFE3BLHRSCXYH2M5AEGQY",
+        max_length=73,
+        min_length=15,
+        regex="^[A-Z2-7]{10,73}$",
+        writeOnly=True,
+    )
+
+
+class Head(ModelSchema):
+    class Config:
+        model = IsccIdModel
+        model_fields = ["chain", "block_height", "block_hash", "tx_idx", "tx_hash", "timestamp"]
 
 
 class Message(Schema):
