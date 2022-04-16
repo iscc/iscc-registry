@@ -2,6 +2,8 @@ version: "3.8"
 
 volumes:
   db:
+  caddy-config:
+  caddy-data:
 
 services:
   db:
@@ -49,3 +51,20 @@ services:
     environment:
       AUTO_MIGRATE_AND_INSTALL: "false"
     command: dev/entrypoint-worker.sh
+  caddy:
+    container_name: iscc-registry-caddy
+    image: "caddy:2.4.6"
+    restart: unless-stopped
+    env_file:
+      - .env.dev
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile  # configuration
+      - caddy-config:/config  # configuation autosaves
+      - caddy-data:/data  # saving certificates
+    ports:
+      - "8888:8888"
+    depends_on:
+      - db
+      - redis
+      - app
+      - worker

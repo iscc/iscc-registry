@@ -1,0 +1,13 @@
+{
+  email {$SITE_EMAIL}
+}
+
+
+{$SITE_ADDRESS} {
+  header -Server
+  reverse_proxy app:8000
+  encode gzip
+  log {
+      output stdout
+  }
+}
