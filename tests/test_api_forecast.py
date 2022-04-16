@@ -8,7 +8,7 @@ def test_forecast_new(db, api_client):
     f = Forecast(chain_id=d.chain_id, wallet=d.declarer, iscc_code=d.iscc_code)
     response = api_client.post("/forecast", json=f.dict())
     assert response.status_code == 200
-    assert response.json() == {"iscc_id": "ISCC:MMAMRX3HC2SIFMUJ"}
+    assert response.json() == {"iscc_id": "ISCC:MMANWQAKQX42JUDB"}
 
 
 def test_forecast_update(db, api_client):
@@ -28,5 +28,5 @@ def test_forecast_frozen(db, api_client):
     f = Forecast(chain_id=d.chain_id, wallet=d.declarer, iscc_code=d.iscc_code)
     response = api_client.post("/forecast", json=f.dict())
     assert response.status_code == 200
-    assert f"ISCC:{iid_obj.iscc_id}" == "ISCC:MMAMRX3HC2SIFMUJ"
-    assert response.json()["iscc_id"] == "ISCC:MMA4RX3HC2SIFMUJAE"
+    assert f"ISCC:{iid_obj.iscc_id}" == "ISCC:MMANWQAKQX42JUDB"
+    assert response.json()["iscc_id"] == "ISCC:MMA5WQAKQX42JUDBAE"

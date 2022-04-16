@@ -22,7 +22,7 @@ def test_user_get_or_create(db):
 
 def test_register(db, dclr_a):
     iscc_id_obj = register(dclr_a)
-    assert iscc_id_obj.iscc_id == "MIAKOP7RYAH5SVPN"
+    assert iscc_id_obj.iscc_id == "MIACOH2VOZBWZRHU"
     with pytest.raises(RegistrationError):
         register(dclr_a)
 
@@ -67,10 +67,10 @@ def test_rollback_raises(db, dclr_a, dclr_a_update):
 def test_declaration_freeze(db, dclr_a, dclr_a_update):
     dclr_a.message = "frz:"
     iscc_id_obj = register(dclr_a)
-    assert iscc_id_obj.iscc_id == "MIAKOP7RYAH5SVPN"
+    assert iscc_id_obj.iscc_id == "MIACOH2VOZBWZRHU"
     assert iscc_id_obj.frozen is True
-    assert ic.Code(iscc_id_obj.iscc_id).explain == "ID-ETHEREUM-V0-64-a73ff1c00fd955ed"
+    assert ic.Code(iscc_id_obj.iscc_id).explain == "ID-ETHEREUM-V0-64-271f5576436cc4f4"
     iscc_id_obj = register(dclr_a_update)
-    assert iscc_id_obj.iscc_id == "MIA2OP7RYAH5SVPNAE"
+    assert iscc_id_obj.iscc_id == "MIASOH2VOZBWZRHUAE"
     assert iscc_id_obj.frozen is False
-    assert ic.Code(iscc_id_obj.iscc_id).explain == "ID-ETHEREUM-V0-72-a73ff1c00fd955ed-1"
+    assert ic.Code(iscc_id_obj.iscc_id).explain == "ID-ETHEREUM-V0-72-271f5576436cc4f4-1"

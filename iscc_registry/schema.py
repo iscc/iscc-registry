@@ -1,10 +1,11 @@
 from typing import Optional
 from ninja import Schema, ModelSchema
-from pydantic import Field
+from pydantic import Field, root_validator
 import iscc_core as ic
 from bitarray import util
 from datetime import datetime
 from iscc_registry.models import IsccIdModel
+from eth_utils.address import to_checksum_address
 
 
 API_VERSION = "0.1.0"
@@ -65,11 +66,32 @@ class Declaration(Schema):
             uc=uc,
         )["iscc"].lstrip("ISCC:")
 
+    @root_validator(pre=True)
+    def normalize_addresses(cls, values):
+        if values.get("chain_id") in (ic.ST_ID.ETHEREUM, ic.ST_ID.POLYGON):
+            if values.get("declarer"):
+                values["declarer"] = to_checksum_address(values["declarer"])
+            if values.get("registrar"):
+                values["registrar"] = to_checksum_address(values["registrar"])
+        return values
 
-class RegistrationResponse(ModelSchema):
-    class Config:
-        model = IsccIdModel
-        model_fields = ["did", "iscc_id"]
+
+class RegistrationResponse(Schema):
+
+    did: int = Field(
+        ...,
+        description="Cross-Chain time-ordered unique Declaration-ID",
+        example=330445058337719994,
+    )
+
+    iscc_id: str = Field(
+        ...,
+        description="Globally unique ISCC-ID",
+        example="ISCC:MMAOHZYGQLBASTFM",
+        max_length=73,
+        min_length=15,
+        regex="^ISCC:[A-Z2-7]{10,73}$",
+    )
 
 
 class Forecast(Schema):
@@ -92,7 +114,7 @@ class Forecast(Schema):
     wallet: Optional[str] = Field(
         None,
         description="Wallet-Address of original declaring party",
-        example="0x5ba91faf7a024204f7c1bd874da5e709d4713d60",
+        example="0x1aD91ee08f21bE3dE0BA2ba6918E714dA6B45836",
         writeOnly=True,
     )
     iscc_code: Optional[str] = Field(
@@ -104,6 +126,13 @@ class Forecast(Schema):
         regex="^[A-Z2-7]{10,73}$",
         writeOnly=True,
     )
+
+    @root_validator(pre=True)
+    def normalize_addresses(cls, values):
+        if values.get("chain_id") in (ic.ST_ID.ETHEREUM, ic.ST_ID.POLYGON):
+            if values.get("wallet"):
+                values["wallet"] = to_checksum_address(values["wallet"])
+        return values
 
 
 class Head(ModelSchema):

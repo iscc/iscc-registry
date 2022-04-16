@@ -38,7 +38,7 @@ def test_register(db, api_client):
         "/register", json=Fake().declaration, headers={"Authorization": "Bearer observer-token"}
     )
     assert resp.status_code == 201
-    assert resp.json() == {"did": 330445058337719994, "iscc_id": "MMAMRX3HC2SIFMUJ"}
+    assert resp.json() == {"did": 330445058337719994, "iscc_id": "ISCC:MMANWQAKQX42JUDB"}
 
 
 def test_register_duplicate_fails(db, api_client):

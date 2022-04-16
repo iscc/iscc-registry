@@ -82,7 +82,7 @@ def register_(request, declartion: Declaration):
     try:
         iid_obj = register(declartion)
         # defer(fetch_metadata, arguments={"args": [iid_obj.did]})
-        return 201, iid_obj
+        return 201, dict(did=iid_obj.did, iscc_id=f"ISCC:{iid_obj.iscc_id}")
     except RegistrationError as e:
         return 422, Message(message=str(e))
 

@@ -17,7 +17,7 @@ def test_schema_declaration(dclr_a):
         "block_hash": "0x60735e41758bd8f411117ac7f20ef3779c35ab9c9c2e4f5c70c87d4d73979f05",
         "block_height": 14514543,
         "chain_id": 2,
-        "declarer": "0x1ad91ee08f21be3de0ba2ba6918e714da6b45836",
+        "declarer": "0x1aD91ee08f21bE3dE0BA2ba6918E714dA6B45836",
         "iscc_code": "KACT4EBWK27737D2AYCJRAL5Z36G76RFRMO4554RU26HZ4ORJGIVHDI",
         "message": None,
         "meta_url": None,
@@ -41,5 +41,5 @@ def test_declaration_chain_id(dclr_a):
 
 
 def test_declaration_iscc_id(dclr_a):
-    assert dclr_a.get_iscc_id() == "MIAKOP7RYAH5SVPN"
-    assert dclr_a.get_iscc_id(uc=1) == "MIA2OP7RYAH5SVPNAE"
+    assert dclr_a.get_iscc_id() == "MIACOH2VOZBWZRHU"
+    assert dclr_a.get_iscc_id(uc=1) == "MIASOH2VOZBWZRHUAE"
