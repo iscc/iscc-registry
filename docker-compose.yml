@@ -1,0 +1,30 @@
+version: "3.8"
+
+volumes:
+  db:
+
+services:
+  db:
+    image: postgres:14
+    init: true
+    environment:
+      POSTGRES_USER: iscc
+      POSTGRES_PASSWORD: generator
+    volumes:
+      - db:/var/lib/postgresql/data
+
+  app:
+    init: true
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+    build:
+      target: dev-runtime
+    environment:
+      DEBUG: "true"
+      DJANGO_SECRET_KEY: "set-to-secure-random-secret-in-production"
+      DATABASE_URL: postgres://iscc:generator@db/iscc
+      AUTO_MIGRATE_AND_INSTALL: "true"
+    ports:
+      - 127.0.0.1:8000:8000

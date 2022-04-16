@@ -51,9 +51,13 @@ def demo():
     username = "demo"
     password = "demo"
     email = "demo@eexample.com"
-    User.objects.create_superuser(username=username, password=password, email=email)
-    log.info(f"Username: {username}")
-    log.info(f"Password: {password}")
+    if not User.objects.filter(username=username).exists():
+        User.objects.create_superuser(username=username, password=password, email=email)
+        log.info("############ CREATED DEMO SUPERUSER ############ ")
+        log.info(f"Username: {username}")
+        log.info(f"Password: {password}")
+    else:
+        log.info("Skipped creating demo user - already exists")
 
 
 if __name__ == "__main__":

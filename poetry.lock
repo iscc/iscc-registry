@@ -485,7 +485,7 @@ pyparsing = ">=2.0.2,<3.0.5 || >3.0.5"
 name = "pastel"
 version = "0.2.1"
 description = "Bring colors to your terminal."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
@@ -537,7 +537,7 @@ testing = ["pytest", "pytest-benchmark"]
 name = "poethepoet"
 version = "0.13.1"
 description = "A task runner that works well with poetry."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6.2"
 
@@ -712,7 +712,7 @@ python-versions = ">=3.5"
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -829,7 +829,7 @@ python-versions = ">=3.6"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.11"
-content-hash = "a44c9008bfeed6af98390159c1e61bdf91d4d7b4b36729845ccabed8d99e7870"
+content-hash = "ea180034bfb577cb232975ed2dc4e775abd505cd3e976d0e844a3481d17d18b8"
 
 [metadata.files]
 asgiref = [
