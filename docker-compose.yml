@@ -8,9 +8,8 @@ services:
     container_name: iscc-registry-db
     image: postgres:14
     init: true
-    environment:
-      POSTGRES_USER: iscc
-      POSTGRES_PASSWORD: generator
+    env_file:
+      - .env.dev
     volumes:
       - db:/var/lib/postgresql/data
   redis:
@@ -26,11 +25,9 @@ services:
       - .:/app
     build:
       target: dev-runtime
+    env_file:
+      - .env.dev
     environment:
-      DEBUG: "true"
-      DJANGO_SECRET_KEY: "set-to-secure-random-secret-in-production"
-      DATABASE_URL: postgres://iscc:generator@db/iscc
-      REDIS_URL: redis://redis/?db=1
       AUTO_MIGRATE_AND_INSTALL: "true"
     ports:
       - 127.0.0.1:8000:8000
@@ -45,10 +42,8 @@ services:
       - .:/app
     build:
       target: dev-runtime
+    env_file:
+      - .env.dev
     environment:
-      DEBUG: "true"
-      DJANGO_SECRET_KEY: "set-to-secure-random-secret-in-production"
-      DATABASE_URL: postgres://iscc:generator@db/iscc
-      REDIS_URL: redis://redis/?db=1
       AUTO_MIGRATE_AND_INSTALL: "false"
     command: dev/entrypoint-worker.sh
