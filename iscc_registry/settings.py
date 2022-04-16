@@ -8,9 +8,11 @@ env = environ.Env(
     SECRET_KEY=(str, "warning-todo-change-to-secure-secret-for-production-env"),
     DATABASE_URL=(str, "sqlite://:memory:"),
     REDIS_URL=(str, "redis://localhost:6379/?db=1"),
-    ALLOWED_HOSTS=(list, ["*"]),
+    ALLOWED_HOSTS=(list, ["localhost"]),
+    CSRF_TRUSTED_ORIGINS=(list, ["http://localhost:8888"]),
     OBSERVER_TOKEN=(str, "observer-token"),
     IPFS_GATEWAY=(str, "https://ipfs.iscc.id/ipfs/"),
+    CORS_ALLOW_ALL_ORIGINS=(bool, False)
 )
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -115,3 +117,5 @@ HUEY = {
 # Access token for observers
 OBSERVER_TOKEN = env("OBSERVER_TOKEN")
 IPFS_GATEWAY = env("IPFS_GATEWAY")
+CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS")
+CORS_ALLOW_ALL_ORIGINS = env("CORS_ALLOW_ALL_ORIGINS")
