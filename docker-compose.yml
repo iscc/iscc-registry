@@ -24,6 +24,7 @@ services:
     volumes:
       - .:/app
     build:
+      context: .
       target: dev-runtime
     env_file:
       - .env.dev
@@ -41,6 +42,7 @@ services:
     volumes:
       - .:/app
     build:
+      context: .
       target: dev-runtime
     env_file:
       - .env.dev
