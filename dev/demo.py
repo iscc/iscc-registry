@@ -46,6 +46,9 @@ def demo():
     management.call_command("loaddata", "--app", "admin_interface.Theme", "theme")
     management.call_command("loaddata", "--app", "iscc_registry.ChainModel", "chains")
 
+    log.info("collect staticfiles")
+    management.call_command("collectstatic", "--noinput")
+
     log.info("create demo user")
     User = get_user_model()
     username = "demo"
