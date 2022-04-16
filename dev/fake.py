@@ -14,6 +14,7 @@ class Fake:
         self.BLOCK_HEIGHT = {i.name: i.value for i in ic.ST_ID}
         self.CHAIN_ID = 1
         self.rnd = random.Random(0)
+        ic.Code.rgen = random.Random(0)
 
     @property
     def timestamp(self):
