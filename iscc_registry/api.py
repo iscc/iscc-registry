@@ -19,6 +19,7 @@ from iscc_registry import schema as s
 from iscc_registry.models import IsccIdModel
 from iscc_registry.schema import Head, Message, RegistrationResponse, Declaration
 from iscc_registry.transactions import rollback, register, mint
+from iscc_registry.tasks import fetch_metadata
 from ninja.security import HttpBearer
 import iscc_core as ic
 
@@ -81,7 +82,8 @@ def register_(request, declartion: Declaration):
     """Register an on-chain ISCC-Declaration for ISCC-ID minting."""
     try:
         iid_obj = register(declartion)
-        # defer(fetch_metadata, arguments={"args": [iid_obj.did]})
+        # enqueue task to fetch metadata
+        fetch_metadata(iid_obj.did)
         return 201, dict(did=iid_obj.did, iscc_id=f"ISCC:{iid_obj.iscc_id}")
     except RegistrationError as e:
         return 422, Message(message=str(e))

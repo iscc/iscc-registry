@@ -108,8 +108,8 @@ FIXTURE_DIRS = [BASE_DIR / "iscc_registry/fixtures"]
 HUEY = {
     "name": "iscc_registry",
     "url": env("REDIS_URL"),
-    "immediate_use_memory": env("DEBUG"),
-    "immediate": env("DEBUG"),
+    "immediate_use_memory": False,
+    "immediate": False,
 }
 
 # Access token for observers

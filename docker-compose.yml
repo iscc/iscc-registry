@@ -12,11 +12,13 @@ services:
       POSTGRES_PASSWORD: generator
     volumes:
       - db:/var/lib/postgresql/data
-
+  redis:
+    image: redis:alpine
   app:
     init: true
     depends_on:
       - db
+      - redis
     volumes:
       - .:/app
     build:
@@ -25,6 +27,25 @@ services:
       DEBUG: "true"
       DJANGO_SECRET_KEY: "set-to-secure-random-secret-in-production"
       DATABASE_URL: postgres://iscc:generator@db/iscc
+      REDIS_URL: redis://redis/?db=1
       AUTO_MIGRATE_AND_INSTALL: "true"
     ports:
       - 127.0.0.1:8000:8000
+  worker:
+    init: true
+    depends_on:
+      - db
+      - redis
+      - app
+    volumes:
+      - .:/app
+    build:
+      target: dev-runtime
+    environment:
+      DEBUG: "true"
+      DJANGO_SECRET_KEY: "set-to-secure-random-secret-in-production"
+      DATABASE_URL: postgres://iscc:generator@db/iscc
+      REDIS_URL: redis://redis/?db=1
+    command: dev/entrypoint-worker.sh
+
+

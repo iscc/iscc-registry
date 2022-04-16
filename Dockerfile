@@ -32,6 +32,7 @@ RUN poetry install
 
 
 COPY dev/entrypoint-dev.sh /app/dev/
+COPY dev/entrypoint-worker.sh /app/dev/
 ENTRYPOINT [ "dev/entrypoint-dev.sh" ]
 
 EXPOSE 8000/tcp

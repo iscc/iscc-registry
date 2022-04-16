@@ -12,6 +12,7 @@ def example_task():
     log.info("running example task")
 
 
+@huey.db_task()
 def fetch_metadata(did: int):
     """Fetch and store ISCC metadata"""
     iscc_id_obj = IsccIdModel.objects.get(did=did)
