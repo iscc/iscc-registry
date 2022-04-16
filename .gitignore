@@ -143,6 +143,7 @@ cython_debug/
 
 # Configuration
 .env
+.env.prod
 
 # Dev deb
 dev/dev.db
