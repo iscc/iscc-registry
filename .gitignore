@@ -141,9 +141,9 @@ cython_debug/
 # Jetbrains
 .idea/
 
-# Configuration
-.env
+# Deployment
 .env.prod
+docker-compose.override.yml
 
 # Dev deb
 dev/dev.db
