@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 from django.db import IntegrityError
-
+import iscc_core as ic
 from iscc_registry.exceptions import RegistrationError
 from iscc_registry import models
 from iscc_registry.transactions import register, rollback
@@ -69,6 +69,8 @@ def test_declaration_freeze(db, dclr_a, dclr_a_update):
     iscc_id_obj = register(dclr_a)
     assert iscc_id_obj.iscc_id == "MIAKOP7RYAH5SVPN"
     assert iscc_id_obj.frozen is True
+    assert ic.Code(iscc_id_obj.iscc_id).explain == "ID-ETHEREUM-V0-64-a73ff1c00fd955ed"
     iscc_id_obj = register(dclr_a_update)
     assert iscc_id_obj.iscc_id == "MIA2OP7RYAH5SVPNAE"
     assert iscc_id_obj.frozen is False
+    assert ic.Code(iscc_id_obj.iscc_id).explain == "ID-ETHEREUM-V0-72-a73ff1c00fd955ed-1"

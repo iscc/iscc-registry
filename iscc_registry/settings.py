@@ -35,7 +35,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_json_widget",
-    "django_simple_task",
     "huey.contrib.djhuey",
     "iscc_registry",
 ]

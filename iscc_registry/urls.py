@@ -7,8 +7,8 @@ from django.views.generic.base import RedirectView
 
 
 urlpatterns = [
-    path("dashboard/", admin.site.urls, name="dahsboard"),
     path("api/", api.urls, name="api"),
+    path("dashboard/", admin.site.urls, name="dahsboard"),
     path("registry/", public_admin.urls, name="registry"),
     path("<str:iscc_id>", views.resolver, name="resolver"),
     path("", RedirectView.as_view(url="/registry/iscc_registry/isccidmodel/"), name="index"),

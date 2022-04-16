@@ -1,4 +1,4 @@
-asgiref==3.5.0; python_version >= "3.8" and python_version < "4" \
+asgiref==3.5.0; python_version >= "3.8" \
     --hash=sha256:88d59c13d634dcffe0510be048210188edd79aeccb6a6c9028cdad6f31d730a9 \
     --hash=sha256:2f8abc20f7248433085eda803936d98992f1343ddb022065779f37c5da0181d0
 async-timeout==4.0.2; python_version >= "3.6" \
@@ -135,9 +135,6 @@ django-ninja==0.17.0; python_version >= "3.6" \
 django-public-admin==0.0.5; python_version >= "3.6" and python_version < "4.0" \
     --hash=sha256:24be0abbe47b8aa6dad18ffe0ca4973a85f59dceca1cc9d307be605d5bfca03d \
     --hash=sha256:6bd9915e4250a0ccbacb7035ef30ae0e2c1dad04897d7d3b2235176a64a8dcb9
-django-simple-task==0.1.2; python_version >= "3.7" and python_version < "4" \
-    --hash=sha256:c70c5fd1db9ba58026ea3a00831c2c1a4d335f29c106321bb2dce643b7a71319 \
-    --hash=sha256:fe6494f5297711f5ec767835163dad3e4f6b751aa8857f0c338e5271a0721a4f
 django==4.0.4; python_version >= "3.8" \
     --hash=sha256:07c8638e7a7f548dc0acaaa7825d84b7bd42b10e8d22268b3d572946f1e9b687 \
     --hash=sha256:4e8177858524417563cc0430f29ea249946d831eacb0068a1455686587df40b5
@@ -154,9 +151,9 @@ huey==2.4.3 \
 idna==3.3; python_version >= "3.5" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.5" \
     --hash=sha256:84d9dd047ffa80596e0f246e2eab0b391788b0503584e8945f2368256d2735ff \
     --hash=sha256:9d643ff0a55b762d5cdb124b8eaa99c66322e2157b69160bc32796e824360e6d
-iscc-core==0.2.6; python_version >= "3.7" and python_version < "4.0" \
-    --hash=sha256:098224181a231312165ce59333200c278379d98c378c7afd327b830b427f9433 \
-    --hash=sha256:cce4f01294a1eb284b356ff7d9350ec73695ff981544fba9a1a7fe02782b2ee0
+iscc-core==0.2.7; python_version >= "3.7" and python_version < "4.0" \
+    --hash=sha256:8c2a05525f6f8917183b565d004a03afbb3a7d8b2120917c1f9d9e37af6638c4 \
+    --hash=sha256:b00b26da507fd9881f3abebb8400e88b1b4c8e027ae8d1095782e1ed58dd7b9b
 jcs==0.2.1; python_full_version >= "3.6.2" \
     --hash=sha256:e23a3e1de60f832d33cd811bb9c3b3be79219cdf95f63b88f0972732c3fa8476 \
     --hash=sha256:9f20360b2f3b0a410d65493b448f96306d80e37fb46283f3f4aa5db2c7c1472b

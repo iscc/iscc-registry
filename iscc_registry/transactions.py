@@ -23,32 +23,8 @@ def register(d: Declaration) -> IsccIdModel:
         user_obj_registrar = User.get_or_create(wallet=d.declarer, group="registrar")
 
     # Mint ISCC-ID
-    uc = 0
-    while True:
-        candidate = d.get_iscc_id(uc=uc)
-        iid_obj = (
-            IsccIdModel.objects.filter(iscc_id=candidate)
-            .only("iscc_code", "owner", "frozen", "deleted")
-            .order_by("did")
-            .last()
-        )
-        if iid_obj:
-            # ISCC-ID exists. It should be active.
-            if iid_obj.active is False:
-                raise IntegrityError(f"Latest {iid_obj.iscc_id} is not active")
-            # Check if we can update
-            can_update = iid_obj.owner.username == d.declarer
-            can_update = can_update and iid_obj.frozen is False and iid_obj.deleted is False
-            can_update = can_update and iid_obj.iscc_code == d.iscc_code
-            if not can_update:
-                # Try the next ISCC-ID
-                uc += 1
-                continue
-            else:
-                # Deactivate
-                iid_obj.active = False
-                iid_obj.save()
-        break
+    candidate = mint(d.iscc_code, d.chain_id, d.declarer)
+    IsccIdModel.objects.filter(iscc_id=candidate).update(active=False)
 
     # Create new IsccIdModel entry for declaration event
     new_iid_obj = IsccIdModel(
@@ -66,7 +42,7 @@ def register(d: Declaration) -> IsccIdModel:
         tx_idx=d.tx_idx,
         tx_hash=d.tx_hash,
         registrar=user_obj_registrar,
-        simhash=ic.alg_simhash_from_iscc_id(candidate, d.declarer),
+        simhash=ic.alg_simhash_from_iscc_id(iscc_id=candidate, wallet=d.declarer),
         frozen=d.freeze,
         deleted=d.delete,
         revision=IsccIdModel.objects.filter(iscc_id=candidate).count() + 1,
@@ -96,3 +72,31 @@ def rollback(block_hash: str):
 
     new_head = IsccIdModel.objects.filter(chain_id=start_obj.chain_id).order_by("did").last()
     return Head.from_orm(new_head)
+
+
+def mint(iscc_code: str, chain_id: int, wallet: str) -> str:
+    """
+    Mint ISCC-ID according to Minting protocol based on the history of the registry.
+    """
+    uc = 0
+    while True:
+        candidate = ic.gen_iscc_id_v0(iscc_code, chain_id, wallet, uc=uc)["iscc"].lstrip("ISCC:")
+        iid_obj = (
+            IsccIdModel.objects.filter(iscc_id=candidate)
+            .only("iscc_code", "owner", "frozen", "deleted")
+            .order_by("did")
+            .last()
+        )
+        if iid_obj:
+            # ISCC-ID exists. It should be active.
+            if iid_obj.active is False:
+                raise IntegrityError(f"Latest {iid_obj.iscc_id} is not active")
+            # Check if we can update
+            can_update = iid_obj.owner.username == wallet
+            can_update = can_update and iid_obj.frozen is False and iid_obj.deleted is False
+            can_update = can_update and iid_obj.iscc_code == iscc_code
+            if not can_update:
+                # Try the next ISCC-ID
+                uc += 1
+                continue
+        return candidate
