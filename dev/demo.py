@@ -39,7 +39,6 @@ def demo():
         os.remove(mig)
 
     log.info("run database migrations")
-    management.call_command("makemigrations")
     management.call_command("migrate")
 
     log.info("load fixtures")
