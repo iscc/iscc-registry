@@ -12,7 +12,7 @@ env = environ.Env(
     CSRF_TRUSTED_ORIGINS=(list, ["http://localhost:8888"]),
     OBSERVER_TOKEN=(str, "observer-token"),
     IPFS_GATEWAY=(str, "https://ipfs.iscc.id/ipfs/"),
-    CORS_ALLOW_ALL_ORIGINS=(bool, False)
+    CORS_ALLOW_ALL_ORIGINS=(bool, False),
 )
 
 BASE_DIR = Path(__file__).resolve().parent.parent
