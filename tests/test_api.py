@@ -15,7 +15,7 @@ def test_head_auth_and_empty(db, api_client):
     assert resp.status_code == 401
     assert resp.json() == {"detail": "Unauthorized"}
     resp = api_client.get("/head/1", headers={"Authorization": "Bearer observer-token"})
-    assert resp.status_code == 204
+    assert resp.status_code == 422
     assert resp.json() == {"message": "No registrations found for chain"}
 
 

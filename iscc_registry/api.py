@@ -68,12 +68,12 @@ def forecast(request, data: s.Forecast):
 ####################################################################################################
 
 
-@api.get("/head/{chain_id}", tags=["observer"], response={200: Head, 204: Message})
+@api.get("/head/{chain_id}", tags=["observer"], response={200: Head, 422: Message})
 def head(request, chain_id: int):
     """Return block header of the latest registration event for given chain."""
     obj = IsccIdModel.objects.filter(chain_id=chain_id).order_by("did").last()
     if not obj:
-        return 204, Message(message="No registrations found for chain")
+        return 422, Message(message="No registrations found for chain")
     return 200, obj
 
 
