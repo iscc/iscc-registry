@@ -1,6 +1,6 @@
 from typing import Optional
 from ninja import Schema, ModelSchema
-from pydantic import Field, root_validator
+from pydantic import Field, root_validator, validator
 import iscc_core as ic
 from bitarray import util
 from datetime import datetime
@@ -32,7 +32,7 @@ class Declaration(Schema):
         example="KACYPXW445FTYNJ3CYSXHAFJMA2HUWULUNRFE3BLHRSCXYH2M5AEGQY",
         max_length=73,
         min_length=15,
-        regex="^[A-Z2-7]{10,73}$",
+        regex="^[A-Z2-7:]{10,73}$",
     )
     message: Optional[str] = Field(None, description="Declaration processing message")
     meta_url: Optional[str] = Field(None, description="URL for ISCC Metadata")
@@ -74,6 +74,10 @@ class Declaration(Schema):
             if values.get("registrar"):
                 values["registrar"] = to_checksum_address(values["registrar"])
         return values
+
+    @validator("iscc_code", pre=True)
+    def clean_iscc(cls, v):
+        return ic.iscc_clean(v)
 
 
 class RegistrationResponse(Schema):
