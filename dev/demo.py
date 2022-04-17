@@ -31,13 +31,6 @@ def demo():
             log.error(f"failed deleting dev database - retry after stopping dev server")
             sys.exit(0)
 
-    log.info("purge existing migrations")
-    migrations_path = HERE.parent / "iscc_registry/migrations"
-    migrations_files = migrations_path.glob("000*.py")
-    for mig in migrations_files:
-        log.info(f"purging {mig.name}")
-        os.remove(mig)
-
     log.info("run database migrations")
     management.call_command("migrate")
 
