@@ -10,5 +10,6 @@
   log {
       output stdout
       format console
+      level ERROR
   }
 }
