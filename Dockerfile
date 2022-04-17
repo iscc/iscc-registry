@@ -37,4 +37,4 @@ ENTRYPOINT [ "dev/entrypoint-dev.sh" ]
 
 EXPOSE 8000/tcp
 
-CMD ["poetry", "run", "uvicorn", "iscc_registry.asgi:application", "--host=0.0.0.0", "--reload"]
+CMD ["poetry", "run", "gunicorn", "iscc_registry.asgi:application", "--bind=0.0.0.0:8000", "-k", "uvicorn.workers.UvicornWorker", "--reload"]
