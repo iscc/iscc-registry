@@ -9,5 +9,6 @@
   encode gzip
   log {
       output stdout
+      format console
   }
 }
