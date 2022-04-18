@@ -25,10 +25,12 @@ def fetch_metadata(did: int):
         url = iscc_id_obj.meta_url
 
     log.debug(f"fetch metadata from: {url}")
-
-    meta = requests.get(url, timeout=10)
-    data = meta.json()
-    if data:
-        log.info(f"fetched metadata for {iscc_id_obj.iscc_id}: {data}")
-        iscc_id_obj.metadata = data
-        iscc_id_obj.save()
+    try:
+        meta = requests.get(url, timeout=10)
+        data = meta.json()
+        if data:
+            log.info(f"fetched metadata for {iscc_id_obj.iscc_id}: {data}")
+            iscc_id_obj.metadata = data
+            iscc_id_obj.save()
+    except Exception as e:
+        log.error(e)
