@@ -49,6 +49,7 @@ services:
     env_file:
       - .env.dev
     environment:
+      HUEY_SIMULATE: "false"
       AUTO_MIGRATE_AND_INSTALL: "false"
     command: dev/entrypoint-worker.sh
   caddy:
