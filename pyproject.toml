@@ -43,13 +43,16 @@ line-length = 100
 target-version = ['py38']
 
 [tool.poe.tasks]
+reqs = { cmd = "poetry export -f requirements.txt --output requirements.txt", help = "Update requirements.txt"}
+format = { cmd = "poetry run black .", help = "Code style formating with black" }
+lf = { cmd = "poetry run python -m dev.lf", help = "Convert line endings to lf"}
+test = { cmd = "poetry run pytest", help = "Run tests" }
+
 demo = { cmd = "poetry run python -m dev.demo", help = "Install app with demo user"}
 load = { cmd = "poetry run python -m dev.load", help = "Load some test data"}
-format = { cmd = "poetry run black .", help = "Code style formating with black" }
-test = { cmd = "poetry run pytest", help = "Run tests" }
-reqs = { cmd = "poetry export -f requirements.txt --output requirements.txt", help = "Update requirements.txt"}
 run = { cmd = "uvicorn iscc_registry.asgi:application --reload"}
-all = ["reqs", "format", "test"]
+
+all = ["reqs", "format", "lf", "test"]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "tests.settings"
