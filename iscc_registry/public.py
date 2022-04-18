@@ -14,15 +14,55 @@ class IsccIdAdmin(PublicModelAdmin):
         "iscc_code",
     ]
 
+    fieldsets = (
+        (
+            "Core Data",
+            {
+                "fields": (
+                    "admin_iscc_id",
+                    "admin_iscc_code",
+                    "owner",
+                    "revision",
+                    "display_redirect",
+                ),
+            },
+        ),
+        (
+            "Metadata",
+            {
+                "fields": [
+                    "meta_url",
+                    "display_thumbnail",
+                    "display_name",
+                    "display_description",
+                    "display_license",
+                ],
+            },
+        ),
+        (
+            "Ledger Reference",
+            {
+                "fields": (
+                    "chain",
+                    "block_height",
+                    "block_hash",
+                    "tx_idx",
+                    "tx_hash",
+                    "display_ledger_url",
+                )
+            },
+        ),
+    )
+
     @admin.display(ordering="timestamp", description="timestamp")
     def admin_time(self, obj):
         return obj.timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
-    @admin.display(ordering="iscc_id", description="iscc-id")
+    @admin.display(ordering="iscc_id", description="ISCC-ID")
     def admin_iscc_id(self, obj):
         return f"ISCC:{obj.iscc_id}"
 
-    @admin.display(ordering="iscc_code", description="iscc-code")
+    @admin.display(ordering="iscc_code", description="ISCC-CODE")
     def admin_iscc_code(self, obj):
         return f"ISCC:{obj.iscc_code}"
 

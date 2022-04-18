@@ -1,9 +1,13 @@
 from typing import Optional
+
+from django.contrib.admin import display
 from django.contrib.auth.models import AbstractUser, Group
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import Q
 from django.urls import reverse
+from django.utils.safestring import mark_safe
+from django.conf import settings
 
 
 class User(AbstractUser):
@@ -233,6 +237,42 @@ class IsccIdModel(models.Model):
 
     def get_registry_url(self):
         return self.get_admin_url().replace("dashboard", "registry")
+
+    @display(description="redirect")
+    def display_redirect(self):
+        if self.metadata:
+            link = self.metadata.get("redirect")
+            if link:
+                html = f'<a href="{link}" target="top">{link}</a>'
+                return mark_safe(html)
+
+    @display(description="name")
+    def display_name(self):
+        return self.metadata.get("name") if self.metadata else None
+
+    @display(description="description")
+    def display_description(self):
+        return self.metadata.get("description") if self.metadata else None
+
+    @display(description="thumbnail")
+    def display_thumbnail(self):
+        thumb = self.metadata.get("thumbnail") if self.metadata else None
+        if thumb:
+            html = f'<img src="{thumb}">'
+            return mark_safe(html)
+
+    @display(description="license")
+    def display_license(self):
+        return self.metadata.get("license") if self.metadata else None
+
+    @display(description="Ledger URL")
+    def display_ledger_url(self):
+        if settings.TESTNET:
+            url = self.chain.testnet_template.format(tx_hash=self.tx_hash)
+        else:
+            url = self.chain.url_template.format(tx_hash=self.tx_hash)
+        html = f'<a href="{url}" target="top">{url}</a>'
+        return mark_safe(html)
 
     def ancestor(self) -> Optional["IsccIdModel"]:
         """Return previous declaration for this ISCC-ID if existent"""
