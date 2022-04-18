@@ -6,7 +6,7 @@ from iscc_registry.models import IsccIdModel, ChainModel
 
 
 class IsccIdAdmin(PublicModelAdmin):
-    list_display = ["iscc_id", "iscc_code", "owner", "admin_time", "revision"]
+    list_display = ["admin_iscc_id", "admin_iscc_code", "owner", "admin_time", "revision"]
     list_filter = ["chain"]
     list_per_page = 20
     search_fields = [
@@ -17,6 +17,14 @@ class IsccIdAdmin(PublicModelAdmin):
     @admin.display(ordering="timestamp", description="timestamp")
     def admin_time(self, obj):
         return obj.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+
+    @admin.display(ordering="iscc_id", description="iscc-id")
+    def admin_iscc_id(self, obj):
+        return f"ISCC:{obj.iscc_id}"
+
+    @admin.display(ordering="iscc_code", description="iscc-code")
+    def admin_iscc_code(self, obj):
+        return f"ISCC:{obj.iscc_code}"
 
 
 class ChainAdmin(PublicModelAdmin):

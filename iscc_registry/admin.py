@@ -21,7 +21,6 @@ class ChainAdmin(admin.ModelAdmin):
 
 @admin.register(models.IsccIdModel)
 class IsccIDAdmin(admin.ModelAdmin):
-    actions = None
     list_per_page = 20
     search_fields = [
         "=iscc_id",
@@ -29,9 +28,9 @@ class IsccIDAdmin(admin.ModelAdmin):
     ]
     list_display = [
         "did",
-        "iscc_id",
+        "admin_iscc_id",
         "chain",
-        "iscc_code",
+        "admin_iscc_code",
         "owner",
         "admin_time",
         "revision",
@@ -47,3 +46,11 @@ class IsccIDAdmin(admin.ModelAdmin):
     @admin.display(ordering="timestamp", description="timestamp")
     def admin_time(self, obj):
         return obj.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+
+    @admin.display(ordering="iscc_id", description="iscc-id")
+    def admin_iscc_id(self, obj):
+        return f"ISCC:{obj.iscc_id}"
+
+    @admin.display(ordering="iscc_code", description="iscc-code")
+    def admin_iscc_code(self, obj):
+        return f"ISCC:{obj.iscc_code}"
