@@ -8,11 +8,12 @@ env = environ.Env(
     SECRET_KEY=(str, "warning-todo-change-to-secure-secret-for-production-env"),
     DATABASE_URL=(str, "sqlite://:memory:"),
     REDIS_URL=(str, "redis://localhost:6379/?db=1"),
-    ALLOWED_HOSTS=(list, ["localhost"]),
+    ALLOWED_HOSTS=(list, ["localhost", "127.0.0.1"]),
     CSRF_TRUSTED_ORIGINS=(list, ["http://localhost:8888"]),
     OBSERVER_TOKEN=(str, "observer-token"),
-    IPFS_GATEWAY=(str, "https://ipfs.iscc.id/ipfs/"),
+    IPFS_GATEWAY=(str, "https://dweb.link/ipfs/"),
     CORS_ALLOW_ALL_ORIGINS=(bool, False),
+    HUEY_SIMULATE=(bool, False),
     SENTRY_DSN=(str, ""),
 )
 
@@ -38,6 +39,7 @@ environ.Env.read_env(BASE_DIR / ".env")
 SECRET_KEY = env("SECRET_KEY")
 DEBUG = env("DEBUG")
 ALLOWED_HOSTS = env("ALLOWED_HOSTS")
+INTERNAL_IPS = ["127.0.0.1"]
 
 AUTH_USER_MODEL = "iscc_registry.User"
 
@@ -125,8 +127,8 @@ FIXTURE_DIRS = [BASE_DIR / "iscc_registry/fixtures"]
 HUEY = {
     "name": "iscc_registry",
     "url": env("REDIS_URL"),
-    "immediate_use_memory": False,
-    "immediate": False,
+    "immediate_use_memory": env("HUEY_SIMULATE"),
+    "immediate": env("HUEY_SIMULATE"),
 }
 
 # Access token for observers
