@@ -33,6 +33,24 @@ def test_head(db, api_client):
     }
 
 
+def test_head_offset(db, api_client):
+    load(10)
+    h = {"Authorization": "Bearer observer-token"}
+    resp = api_client.get(f"/head/1", headers=h, offset=0)
+    assert (
+        resp.json()["block_hash"]
+        == "0x8d005d0ba53ce166fcc9bf3a79e6d90ceb43c68929d6429bcfdcb0367a8ec52f"
+    )
+    resp = api_client.get(f"/head/1?offset=1", headers=h)
+    assert (
+        resp.json()["block_hash"]
+        == "0x896608666de5509d4665d3ac6b7fde9f981e7bf58a31fa12d6d4c77c2653b369"
+    )
+    resp = api_client.get(f"/head/1?offset=3", headers=h)
+    assert resp.status_code == 422
+    assert resp.json() == {"message": "No registration at offset 3"}
+
+
 def test_register(db, api_client):
     resp = api_client.post(
         "/register", json=Fake().declaration, headers={"Authorization": "Bearer observer-token"}

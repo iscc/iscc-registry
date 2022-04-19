@@ -69,11 +69,15 @@ def forecast(request, data: s.Forecast):
 
 
 @api.get("/head/{chain_id}", tags=["observer"], response={200: Head, 422: Message})
-def head(request, chain_id: int):
+def head(request, chain_id: int, offset: int = 0):
     """Return block header of the latest registration event for given chain."""
-    obj = IsccId.objects.filter(chain_id=chain_id).order_by("did").last()
-    if not obj:
+    qs = IsccId.objects.filter(chain_id=chain_id).order_by("-did")
+    if not qs.exists():
         return 422, Message(message="No registrations found for chain")
+    try:
+        obj = qs[offset]
+    except IndexError:
+        return 422, Message(message=f"No registration at offset {offset}")
     return 200, obj
 
 
