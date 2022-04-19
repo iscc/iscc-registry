@@ -4,7 +4,7 @@ from pydantic import Field, root_validator, validator
 import iscc_core as ic
 from bitarray import util
 from datetime import datetime
-from iscc_registry.models import IsccIdModel
+from iscc_registry.models import IsccId
 from eth_utils.address import to_checksum_address
 
 
@@ -141,7 +141,7 @@ class Forecast(Schema):
 
 class Head(ModelSchema):
     class Config:
-        model = IsccIdModel
+        model = IsccId
         model_fields = ["chain", "block_height", "block_hash", "tx_idx", "tx_hash", "timestamp"]
 
 

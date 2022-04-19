@@ -73,7 +73,7 @@ class ChainModel(models.Model):
         return f"Chain(id={self.id}, name={self.name})"
 
 
-class IsccIdModel(models.Model):
+class IsccId(models.Model):
     """An ISCC-ID minted from a declaration."""
 
     class Meta:
@@ -227,7 +227,7 @@ class IsccIdModel(models.Model):
     @staticmethod
     def get_safe(iscc_id: str):
         """Ensure only the active and non-deleted ISCC-ID is returned"""
-        return IsccIdModel.objects.get(iscc_id=iscc_id, active=True, deleted=False)
+        return IsccId.objects.get(iscc_id=iscc_id, active=True, deleted=False)
 
     def get_admin_url(self):
         content_type = ContentType.objects.get_for_model(self.__class__)
@@ -274,10 +274,10 @@ class IsccIdModel(models.Model):
         html = f'<a href="{url}" target="top">{url}</a>'
         return mark_safe(html)
 
-    def ancestor(self) -> Optional["IsccIdModel"]:
+    def ancestor(self) -> Optional["IsccId"]:
         """Return previous declaration for this ISCC-ID if existent"""
         return (
-            IsccIdModel.objects.filter(iscc_id=self.iscc_id)
+            IsccId.objects.filter(iscc_id=self.iscc_id)
             .exclude(did=self.did)
             .only("did", "active")
             .order_by("did")
@@ -288,4 +288,4 @@ class IsccIdModel(models.Model):
         return f"ISCC:{self.iscc_id}"
 
     def __repr__(self):
-        return f"IsccIDModel({self.did})"
+        return f"IsccId({self.did})"

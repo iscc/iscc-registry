@@ -2,7 +2,7 @@
 from django.contrib import admin
 from public_admin.admin import PublicModelAdmin
 from public_admin.sites import PublicApp, PublicAdminSite
-from iscc_registry.models import IsccIdModel, ChainModel
+from iscc_registry.models import IsccId, ChainModel
 
 
 class IsccIdAdmin(PublicModelAdmin):
@@ -79,8 +79,8 @@ class ChainAdmin(PublicModelAdmin):
     list_display = ["chain", "name"]
 
 
-public_app = PublicApp("iscc_registry", models=("IsccIdModel", "ChainModel"))
+public_app = PublicApp("iscc_registry", models=("IsccId", "ChainModel"))
 public_admin = PublicAdminSite("iscc_registry", public_app)
 public_admin.enable_nav_sidebar = False
-public_admin.register(IsccIdModel, IsccIdAdmin)
+public_admin.register(IsccId, IsccIdAdmin)
 public_admin.register(ChainModel, ChainAdmin)

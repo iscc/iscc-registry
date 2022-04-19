@@ -1,16 +1,16 @@
 from iscc_registry.exceptions import RegistrationError
 from iscc_registry.schema import Declaration, Head
-from iscc_registry.models import User, IsccIdModel
+from iscc_registry.models import User, IsccId
 from django.db import transaction, IntegrityError
 import iscc_core as ic
 
 
 @transaction.atomic
-def register(d: Declaration) -> IsccIdModel:
+def register(d: Declaration) -> IsccId:
     """Register an ISCC delcaration."""
 
     # check for integirty
-    qs = IsccIdModel.objects.filter(did__gte=d.did, chain_id=d.chain_id).only("did").order_by("did")
+    qs = IsccId.objects.filter(did__gte=d.did, chain_id=d.chain_id).only("did").order_by("did")
     for obj in qs:
         if obj.did == d.did:
             raise RegistrationError(f"Declaration {d.did} already registered")
@@ -24,10 +24,10 @@ def register(d: Declaration) -> IsccIdModel:
 
     # Mint ISCC-ID
     candidate = mint(d.iscc_code, d.chain_id, d.declarer)
-    IsccIdModel.objects.filter(iscc_id=candidate).update(active=False)
+    IsccId.objects.filter(iscc_id=candidate).update(active=False)
 
     # Create new IsccIdModel entry for declaration event
-    new_iid_obj = IsccIdModel(
+    new_iid_obj = IsccId(
         did=d.did,
         iscc_id=candidate,
         iscc_code=d.iscc_code,
@@ -45,7 +45,7 @@ def register(d: Declaration) -> IsccIdModel:
         simhash=ic.alg_simhash_from_iscc_id(iscc_id=candidate, wallet=d.declarer),
         frozen=d.freeze,
         deleted=d.delete,
-        revision=IsccIdModel.objects.filter(iscc_id=candidate).count() + 1,
+        revision=IsccId.objects.filter(iscc_id=candidate).count() + 1,
     )
     new_iid_obj.save(force_insert=True)
     return new_iid_obj
@@ -54,14 +54,12 @@ def register(d: Declaration) -> IsccIdModel:
 @transaction.atomic
 def rollback(block_hash: str):
     """Reset event history to before `block_hash` in case of a fork."""
-    start_obj = IsccIdModel.objects.filter(block_hash=block_hash).order_by("did").first()
+    start_obj = IsccId.objects.filter(block_hash=block_hash).order_by("did").first()
     if start_obj is None:
         raise IntegrityError(f"No declaration found for block {block_hash}")
 
     # Select events from all chains for backwards iteration to have consistent state
-    stale_qs = (
-        IsccIdModel.objects.filter(did__gte=start_obj.did).order_by("-did").only("did", "active")
-    )
+    stale_qs = IsccId.objects.filter(did__gte=start_obj.did).order_by("-did").only("did", "active")
     stale_qs.update(active=False)
     for stale_obj in stale_qs:
         anc = stale_obj.ancestor()
@@ -70,7 +68,7 @@ def rollback(block_hash: str):
             anc.save()
         stale_obj.delete()
 
-    new_head = IsccIdModel.objects.filter(chain_id=start_obj.chain_id).order_by("did").last()
+    new_head = IsccId.objects.filter(chain_id=start_obj.chain_id).order_by("did").last()
     return Head.from_orm(new_head)
 
 
@@ -82,7 +80,7 @@ def mint(iscc_code: str, chain_id: int, wallet: str) -> str:
     while True:
         candidate = ic.gen_iscc_id_v0(iscc_code, chain_id, wallet, uc=uc)["iscc"].lstrip("ISCC:")
         iid_obj = (
-            IsccIdModel.objects.filter(iscc_id=candidate)
+            IsccId.objects.filter(iscc_id=candidate)
             .only("iscc_code", "owner", "frozen", "deleted")
             .order_by("did")
             .last()

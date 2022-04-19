@@ -19,7 +19,7 @@ class ChainAdmin(admin.ModelAdmin):
         return obj.chain
 
 
-@admin.register(models.IsccIdModel)
+@admin.register(models.IsccId)
 class IsccIDAdmin(admin.ModelAdmin):
     list_per_page = 20
     search_fields = [

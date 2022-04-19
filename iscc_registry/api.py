@@ -16,7 +16,7 @@ from ninja.errors import HttpError
 from iscc_registry import settings
 from iscc_registry.exceptions import RegistrationError
 from iscc_registry import schema as s
-from iscc_registry.models import IsccIdModel
+from iscc_registry.models import IsccId
 from iscc_registry.schema import Head, Message, RegistrationResponse, Declaration
 from iscc_registry.transactions import rollback, register, mint
 from iscc_registry.tasks import fetch_metadata
@@ -71,7 +71,7 @@ def forecast(request, data: s.Forecast):
 @api.get("/head/{chain_id}", tags=["observer"], response={200: Head, 422: Message})
 def head(request, chain_id: int):
     """Return block header of the latest registration event for given chain."""
-    obj = IsccIdModel.objects.filter(chain_id=chain_id).order_by("did").last()
+    obj = IsccId.objects.filter(chain_id=chain_id).order_by("did").last()
     if not obj:
         return 422, Message(message="No registrations found for chain")
     return 200, obj

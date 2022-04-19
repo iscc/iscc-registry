@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from dev.fake import Fake
 from dev.load import load
-from iscc_registry.models import IsccIdModel
+from iscc_registry.models import IsccId
 
 
 def test_index(api_client):
@@ -59,7 +59,7 @@ def test_rollback(db, api_client):
         headers={"Authorization": "Bearer observer-token"},
     )
     assert resp.status_code == 200
-    assert IsccIdModel.objects.count() == 5
+    assert IsccId.objects.count() == 5
     assert resp.json() == {
         "block_hash": "0x37378e310269177c27f2c1e0a165ee7e84e83714a8fd279ef6b1de1b66b68980",
         "block_height": 837,
@@ -68,9 +68,9 @@ def test_rollback(db, api_client):
         "tx_hash": "0x71eacd0549a3e80e966e12778c1745a79a6a5f92cca74147f6be1f723405095c",
         "tx_idx": 2213,
     }
-    assert IsccIdModel.objects.count() == 5
+    assert IsccId.objects.count() == 5
     assert (
-        IsccIdModel.objects.filter(
+        IsccId.objects.filter(
             block_hash="0x17f922af7f6650d2aaf11f7e6a434f7218b4e50eeeab62adb19dae2245077965"
         ).exists()
         is False

@@ -1,6 +1,6 @@
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import render, redirect
-from iscc_registry.models import IsccIdModel
+from iscc_registry.models import IsccId
 import iscc_core as ic
 
 
@@ -19,8 +19,8 @@ def resolver(request, iscc_id):
 
     # Fetch from database
     try:
-        iscc_obj = IsccIdModel.get_safe(iscc_id=norm.lstrip("ISCC:"))
-    except IsccIdModel.DoesNotExist:
+        iscc_obj = IsccId.get_safe(iscc_id=norm.lstrip("ISCC:"))
+    except IsccId.DoesNotExist:
         return HttpResponseNotFound(f"{iscc_id} not found.")
 
     # Resolve if we can

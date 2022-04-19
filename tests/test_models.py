@@ -36,7 +36,7 @@ def test_register_update(db, dclr_a, dclr_a_update):
     assert iid_a.active is False
     assert iid_a.iscc_id == iid_b.iscc_id
     assert iid_a.did != iid_b.did
-    iid_query = models.IsccIdModel.objects.filter(iscc_id=iid_a.iscc_id)
+    iid_query = models.IsccId.objects.filter(iscc_id=iid_a.iscc_id)
     assert iid_query.count() == 2
     assert iid_query.latest().meta_url.startswith("ipfs://")
 
@@ -54,7 +54,7 @@ def test_rollback(db, dclr_a, dclr_a_update):
     iid_a.refresh_from_db()
     assert iid_a.active is False
     rollback(iid_b.block_hash)
-    assert models.IsccIdModel.objects.count() == 1
+    assert models.IsccId.objects.count() == 1
     iid_a.refresh_from_db()
     assert iid_a.active is True
 
