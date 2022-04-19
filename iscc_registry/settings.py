@@ -16,6 +16,8 @@ env = environ.Env(
     HUEY_SIMULATE=(bool, False),
     SENTRY_DSN=(str, ""),
     TESTNET=(bool, False),
+    IPFS_RETRIES=(int, 3),
+    IPFS_RETRY_DELAY=(int, 10),
 )
 
 SENTRY_DSN = env("SENTRY_DSN")
@@ -132,6 +134,10 @@ HUEY = {
     "immediate_use_memory": env("HUEY_SIMULATE"),
     "immediate": env("HUEY_SIMULATE"),
 }
+
+# Metadata download retries
+IPFS_RETRIES = env("IPFS_RETRIES")
+IPFS_RETRY_DELAY = env("IPFS_RETRY_DELAY")
 
 # Access token for observers
 OBSERVER_TOKEN = env("OBSERVER_TOKEN")

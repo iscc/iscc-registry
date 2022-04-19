@@ -1,5 +1,4 @@
 """Background tasks"""
-from huey import crontab
 from huey.contrib import djhuey as huey
 from iscc_registry.models import IsccId
 from django.conf import settings
@@ -7,12 +6,7 @@ import requests
 from loguru import logger as log
 
 
-@huey.db_periodic_task(crontab(minute="*/1"))
-def example_task():
-    log.info("running example task")
-
-
-@huey.db_task()
+@huey.db_task(retries=settings.IPFS_RETRIES, delay=settings.IPFS_RETRY_DELAY)
 def fetch_metadata(did: int):
     """Fetch and store ISCC metadata"""
     iscc_id_obj = IsccId.objects.get(did=did)
@@ -25,12 +19,9 @@ def fetch_metadata(did: int):
         url = iscc_id_obj.meta_url
 
     log.debug(f"fetch metadata from: {url}")
-    try:
-        meta = requests.get(url, timeout=10)
-        data = meta.json()
-        if data:
-            log.info(f"fetched metadata for {iscc_id_obj.iscc_id}: {data}")
-            iscc_id_obj.metadata = data
-            iscc_id_obj.save()
-    except Exception as e:
-        log.error(e)
+    meta = requests.get(url, timeout=10)
+    data = meta.json()
+    if data:
+        log.info(f"fetched metadata for {iscc_id_obj.iscc_id}: {data}")
+        iscc_id_obj.metadata = data
+        iscc_id_obj.save()
