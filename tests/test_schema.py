@@ -6,8 +6,8 @@ from iscc_registry import schema
 def test_schema_api():
     api_obj = schema.API()
     assert api_obj.dict() == {
-        "docs": "/api/docs",
-        "openapi": "/api/openapi.json",
+        "docs": "/api/v1/docs",
+        "openapi": "/api/v1/openapi.json",
         "version": "0.1.0",
     }
 

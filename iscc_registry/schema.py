@@ -12,9 +12,9 @@ API_VERSION = "0.1.0"
 
 
 class API(Schema):
-    openapi: str = Field("/api/openapi.json")
+    openapi: str = Field("/api/v1/openapi.json")
     version: str = Field(API_VERSION)
-    docs: str = Field("/api/docs")
+    docs: str = Field("/api/v1/docs")
 
 
 class Declaration(Schema):

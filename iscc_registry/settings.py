@@ -41,6 +41,7 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env("DEBUG")
 ALLOWED_HOSTS = env("ALLOWED_HOSTS")
 INTERNAL_IPS = ["127.0.0.1"]
+APPEND_SLASH = True
 
 AUTH_USER_MODEL = "iscc_registry.User"
 

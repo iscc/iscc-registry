@@ -7,7 +7,11 @@ from iscc_registry.models import IsccId
 def test_index(api_client):
     resp = api_client.get("/")
     assert resp.status_code == 200
-    assert resp.json() == {"docs": "/api/docs", "openapi": "/api/openapi.json", "version": "0.1.0"}
+    assert resp.json() == {
+        "docs": "/api/v1/docs",
+        "openapi": "/api/v1/openapi.json",
+        "version": "0.1.0",
+    }
 
 
 def test_head_auth_and_empty(db, api_client):
