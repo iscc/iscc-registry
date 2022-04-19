@@ -6,7 +6,7 @@ from iscc_registry.models import IsccIdModel, ChainModel
 
 
 class IsccIdAdmin(PublicModelAdmin):
-    list_display = ["admin_iscc_id", "admin_iscc_code", "owner", "admin_time", "revision"]
+    list_display = ["admin_iscc_id", "admin_iscc_code", "owner", "chain", "admin_time", "revision"]
     list_filter = ["chain"]
     list_per_page = 20
     search_fields = [
