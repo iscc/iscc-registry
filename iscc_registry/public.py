@@ -66,6 +66,11 @@ class IsccIdAdmin(PublicModelAdmin):
     def admin_iscc_code(self, obj):
         return f"ISCC:{obj.iscc_code}"
 
+    def get_queryset(self, request):
+        """Only list active and non-deleted ISCC-IDs"""
+        qs = super().get_queryset(request)
+        return qs.filter(active=True, deleted=False)
+
 
 class ChainAdmin(PublicModelAdmin):
     list_display = ["chain", "name"]
