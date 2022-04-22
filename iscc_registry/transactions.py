@@ -20,7 +20,7 @@ def register(d: Declaration) -> IsccId:
     user_obj_declarer = User.get_or_create(wallet=d.declarer, group="declarer")
     user_obj_registrar = None
     if d.registrar:
-        user_obj_registrar = User.get_or_create(wallet=d.declarer, group="registrar")
+        user_obj_registrar = User.get_or_create(wallet=d.registrar, group="registrar")
 
     # Mint ISCC-ID
     candidate = mint(d.iscc_code, d.chain_id, d.declarer)
