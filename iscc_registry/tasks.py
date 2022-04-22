@@ -14,7 +14,7 @@ def fetch_metadata(did: int):
     if not iscc_id_obj.meta_url:
         return
     if iscc_id_obj.meta_url.startswith("ipfs://"):
-        url = settings.IPFS_GATEWAY + iscc_id_obj.meta_url.lstrip("ipfs://")
+        url = settings.IPFS_GATEWAY + iscc_id_obj.meta_url.replace("ipfs://", "")
     else:
         url = iscc_id_obj.meta_url
 
