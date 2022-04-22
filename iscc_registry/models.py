@@ -246,6 +246,16 @@ class IsccId(models.Model):
                 html = f'<a href="{link}" target="top">{link}</a>'
                 return mark_safe(html)
 
+    @display(description="meta url")
+    def display_meta_url(self):
+        if self.meta_url is not None:
+            if self.meta_url.startswith("ipfs://"):
+                link = settings.IPFS_GATEWAY + self.meta_url.replace("ipfs://", "")
+            else:
+                link = self.meta_url
+            html = f'<a href="{link}" target="top">{self.meta_url}</a>'
+            return mark_safe(html)
+
     @display(description="name")
     def display_name(self):
         return self.metadata.get("name") if self.metadata else None

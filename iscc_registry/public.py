@@ -34,7 +34,7 @@ class IsccIdAdmin(PublicModelAdmin):
             "Metadata",
             {
                 "fields": [
-                    "meta_url",
+                    "display_meta_url",
                     "display_thumbnail",
                     "display_name",
                     "display_description",
