@@ -8,6 +8,7 @@ from django.db.models import Q
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.conf import settings
+from iscc_registry.utils import linkify
 
 
 class User(AbstractUser):
@@ -249,12 +250,7 @@ class IsccId(models.Model):
     @display(description="meta url")
     def display_meta_url(self):
         if self.meta_url is not None:
-            if self.meta_url.startswith("ipfs://"):
-                link = settings.IPFS_GATEWAY + self.meta_url.replace("ipfs://", "")
-            else:
-                link = self.meta_url
-            html = f'<a href="{link}" target="top">{self.meta_url}</a>'
-            return mark_safe(html)
+            return linkify(self.meta_url)
 
     @display(description="name")
     def display_name(self):
@@ -273,7 +269,8 @@ class IsccId(models.Model):
 
     @display(description="license")
     def display_license(self):
-        return self.metadata.get("license") if self.metadata else None
+        if self.metadata.get("license"):
+            return linkify(self.metadata.get("license"))
 
     @display(description="Ledger URL")
     def display_ledger_url(self):
