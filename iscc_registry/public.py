@@ -3,11 +3,14 @@ from django.contrib import admin
 from public_admin.admin import PublicModelAdmin
 from public_admin.sites import PublicApp, PublicAdminSite
 from iscc_registry.models import IsccId, ChainModel
+from django.db.models import JSONField
+from django_json_widget.widgets import JSONEditorWidget
 
 
 class IsccIdAdmin(PublicModelAdmin):
     class Media:
         css = {"all": ["/static/iscc_registry/admin_overrides.css"]}
+        js = ("/static/iscc_registry/admin_custom.js",)
 
     list_display = [
         "admin_iscc_id",
@@ -23,6 +26,10 @@ class IsccIdAdmin(PublicModelAdmin):
         "iscc_id",
         "iscc_code",
     ]
+
+    formfield_overrides = {
+        JSONField: {"widget": JSONEditorWidget(options={"mode": "view", "modes": ["view"]})},
+    }
 
     fieldsets = (
         (
@@ -48,6 +55,7 @@ class IsccIdAdmin(PublicModelAdmin):
                     "display_name",
                     "display_description",
                     "display_license",
+                    "metadata",
                 ],
             },
         ),
