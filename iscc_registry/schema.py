@@ -66,18 +66,56 @@ class Declaration(Schema):
             uc=uc,
         )["iscc"].lstrip("ISCC:")
 
-    @root_validator(pre=True)
-    def normalize_addresses(cls, values):
-        if values.get("chain_id") in (ic.ST_ID.ETHEREUM, ic.ST_ID.POLYGON):
-            if values.get("declarer"):
-                values["declarer"] = to_checksum_address(values["declarer"])
-            if values.get("registrar"):
-                values["registrar"] = to_checksum_address(values["registrar"])
-        return values
+    @validator("declarer", "registrar", pre=True, allow_reuse=True)
+    def address_checksum(cls, v):
+        if v and v.startswith("0x"):
+            return to_checksum_address(v)
+        return v
 
-    @validator("iscc_code", pre=True)
+    @validator("iscc_code", pre=True, allow_reuse=True)
     def clean_iscc(cls, v):
         return ic.iscc_clean(v)
+
+
+class DeclarationResponse(ModelSchema):
+
+    declarer: str
+    chain: str
+    registrar: Optional[str]
+
+    class Config:
+        model = IsccId
+        model_fields = [
+            "did",
+            "iscc_id",
+            "iscc_code",
+            "declarer",
+            "meta_url",
+            "message",
+            "chain",
+            "block_height",
+            "block_hash",
+            "tx_idx",
+            "tx_hash",
+            "timestamp",
+            "registrar",
+        ]
+
+    @validator("iscc_id", "iscc_code", pre=True, allow_reuse=True, check_fields=False)
+    def iscc_normalize(cls, v):
+        return ic.iscc_normalize(v)
+
+    @staticmethod
+    def resolve_declarer(obj):
+        return obj.declarer.username if obj.declarer else ""
+
+    @staticmethod
+    def resolve_registrar(obj):
+        return obj.registrar.username if obj.registrar else ""
+
+    @staticmethod
+    def resolve_chain(obj):
+        return obj.chain.name if obj.chain else ""
 
 
 class RegistrationResponse(Schema):
@@ -149,9 +187,10 @@ class Message(Schema):
     message: str
 
 
-class DeclarationResponse(Schema):
-    iscc_id: str
-
-
 class Error(Schema):
     status_code: int
+
+
+class Redirect(Schema):
+
+    url: Optional[str] = Field(..., description="Redirection target for ISCC-ID")

@@ -10,7 +10,6 @@
 """
 from typing import Optional, Any
 from django.http import HttpRequest
-from django.shortcuts import redirect
 from ninja import NinjaAPI
 from ninja.errors import HttpError
 from iscc_registry import settings
@@ -22,6 +21,7 @@ from iscc_registry.transactions import rollback, register, mint
 from iscc_registry.tasks import fetch_metadata
 from ninja.security import HttpBearer
 import iscc_core as ic
+import iscc_schema as ics
 
 
 class ObserverAuth(HttpBearer):
@@ -46,14 +46,60 @@ def index(request):
     return {}
 
 
-@api.get("/resolve/{iscc}", tags=["public"], auth=None)
-def resolve(request, iscc: str):
+@api.get(
+    "/declaration/{iscc_id}",
+    tags=["public"],
+    response=s.DeclarationResponse,
+    auth=None,
+)
+def declaration(request, iscc_id: str):
+    """Get declaration for ISCC-ID"""
     try:
-        ic.iscc_validate(ic.iscc_normalize(iscc), strict=True)
+        ic.iscc_validate(ic.iscc_normalize(iscc_id), strict=True)
     except ValueError as e:
         raise HttpError(400, str(e))
+    return IsccId.get_safe(iscc_id=ic.Code(iscc_id).code)
 
-    return redirect("https://example.com", permanent=False)
+
+@api.get(
+    "/metadata/{iscc_id}",
+    tags=["public"],
+    response=ics.IsccMeta,
+    auth=None,
+    exclude_none=True,
+    by_alias=True,
+)
+def metadata(request, iscc_id: str):
+    """Get metadata for ISCC-ID"""
+    try:
+        ic.iscc_validate(ic.iscc_normalize(iscc_id), strict=True)
+    except ValueError as e:
+        raise HttpError(400, str(e))
+    return IsccId.get_safe(iscc_id=ic.Code(iscc_id).code).metadata
+
+
+@api.get("/resolve/{iscc_id}", tags=["public"], auth=None, response={200: s.Redirect, 404: Message})
+def resolve(request, iscc_id: str):
+    try:
+        norm = ic.iscc_normalize(iscc_id)
+        ic.iscc_validate(norm)
+    except ValueError as e:
+        return 404, Message(message=str(e))
+
+    # Fetch from database
+    try:
+        iscc_obj = IsccId.get_safe(iscc_id=norm.lstrip("ISCC:"))
+    except IsccId.DoesNotExist:
+        return 404, Message(message=f"{iscc_id} does not exist")
+
+    # Resolve if we can
+    if iscc_obj.metadata:
+        url = iscc_obj.metadata.get("redirect")
+        if url:
+            return 200, {"url": url}
+
+    # Redirect to local entry
+    return {"url": iscc_obj.get_registry_url()}
 
 
 @api.post("/forecast", tags=["public"], response=s.Forecast, auth=None, exclude_none=True)

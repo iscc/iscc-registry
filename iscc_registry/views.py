@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound
+from django.http import HttpResponseBadRequest, HttpResponseNotFound
 from django.shortcuts import render, redirect
 from iscc_registry.models import IsccId
 import iscc_core as ic
