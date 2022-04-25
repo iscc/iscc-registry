@@ -30,6 +30,7 @@ pysha3 = "^1.0"
 poethepoet = "^0.13"
 django-cors-headers = "^3.11"
 sentry-sdk = "^1.5"
+iscc-schema = "^0.3.7"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1"

@@ -443,6 +443,18 @@ xxhash = "*"
 turbo = ["cython"]
 
 [[package]]
+name = "iscc-schema"
+version = "0.3.7"
+description = "ISCC - JSON-LD Metadata and OpenAPI Service Descriptions"
+category = "main"
+optional = false
+python-versions = ">=3.7,<4.0.0"
+
+[package.dependencies]
+jcs = ">=0.2,<0.3"
+pydantic = ">=1.9,<2.0"
+
+[[package]]
 name = "jcs"
 version = "0.2.1"
 description = "JCS - JSON Canonicalization"
@@ -870,7 +882,7 @@ python-versions = ">=3.6"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.11"
-content-hash = "cce94cfbecec7bf68b3ea2c47d0cbb7c618beceaef8dcdbde79560c44c8d4f3b"
+content-hash = "b7a48f32b6b9d480b59033edbfcdba1b7b7b493c727e42be1b161178456b822f"
 
 [metadata.files]
 asgiref = [
@@ -1111,6 +1123,10 @@ iniconfig = [
 ]
 iscc-core = [
     {file = "iscc-core-0.2.8.tar.gz", hash = "sha256:f1ffa02f2869f39042379374b64127947f06f2f35f7fb04cb755dfdccfcf1df0"},
+]
+iscc-schema = [
+    {file = "iscc-schema-0.3.7.tar.gz", hash = "sha256:a6f2ff0b6d472e18f23a9eaf9e382056fb70993dd021ae5deb6b0c438d89e83b"},
+    {file = "iscc_schema-0.3.7-py3-none-any.whl", hash = "sha256:18f0139ded83e5a5efaebb4fa5cb647b61c6acc9342a6e57e7badc9c4dd3f7f4"},
 ]
 jcs = [
     {file = "jcs-0.2.1-py3-none-any.whl", hash = "sha256:e23a3e1de60f832d33cd811bb9c3b3be79219cdf95f63b88f0972732c3fa8476"},
