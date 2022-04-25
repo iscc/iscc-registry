@@ -16,8 +16,8 @@ env = environ.Env(
     HUEY_SIMULATE=(bool, False),
     SENTRY_DSN=(str, ""),
     TESTNET=(bool, False),
-    IPFS_RETRIES=(int, 3),
-    IPFS_RETRY_DELAY=(int, 10),
+    IPFS_RETRIES=(int, 10),
+    IPFS_RETRY_DELAY=(int, 60),
 )
 
 SENTRY_DSN = env("SENTRY_DSN")
