@@ -74,3 +74,13 @@ def test_declaration_freeze(db, dclr_a, dclr_a_update):
     assert iscc_id_obj.iscc_id == "MIASOH2VOZBWZRHUAE"
     assert iscc_id_obj.frozen is False
     assert ic.Code(iscc_id_obj.iscc_id).explain == "ID-ETHEREUM-V0-72-271f5576436cc4f4-1"
+
+
+def test_declaration_cannot_delete_new_id(db, dclr_a, dclr_a_update):
+    dclr_a.message = "frz:"
+    iscc_id_obj = register(dclr_a)
+    assert iscc_id_obj.iscc_id == "MIACOH2VOZBWZRHU"
+    assert iscc_id_obj.frozen is True
+    dclr_a_update.message = "del:"
+    with pytest.raises(RegistrationError):
+        register(dclr_a_update)

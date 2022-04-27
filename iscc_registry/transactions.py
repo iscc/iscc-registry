@@ -9,12 +9,21 @@ import iscc_core as ic
 def register(d: Declaration) -> IsccId:
     """Register an ISCC delcaration."""
 
-    # check for integirty
+    # check for monotonic ids
     qs = IsccId.objects.filter(did__gte=d.did, chain_id=d.chain_id).only("did").order_by("did")
     for obj in qs:
         if obj.did == d.did:
             raise RegistrationError(f"Declaration {d.did} already registered")
         raise RegistrationError(f"Found later declaration {obj.did} than {d.did}")
+
+    # Mint ISCC-ID
+    candidate = mint(d.iscc_code, d.chain_id, d.declarer)
+
+    # Check deletion rules
+    if d.delete and not IsccId.objects.filter(iscc_id=candidate).exists():
+        raise RegistrationError(f"Cannot delete new ISCC-ID {candidate}")
+    if d.delete and IsccId.objects.filter(iscc_id=candidate, frozen=True).exists():
+        raise RegistrationError(f"Cannot delete frozen ISCC-ID {candidate}")
 
     # initialize related objects
     user_obj_declarer = User.get_or_create(wallet=d.declarer, group="declarer")
@@ -22,8 +31,7 @@ def register(d: Declaration) -> IsccId:
     if d.registrar:
         user_obj_registrar = User.get_or_create(wallet=d.registrar, group="registrar")
 
-    # Mint ISCC-ID
-    candidate = mint(d.iscc_code, d.chain_id, d.declarer)
+    # Deactivate pre-existing versions of ISCC-ID
     IsccId.objects.filter(iscc_id=candidate).update(active=False)
 
     # Create new IsccIdModel entry for declaration event
