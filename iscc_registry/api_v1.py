@@ -10,6 +10,7 @@
 """
 from typing import Optional, Any
 from django.http import HttpRequest
+from django.conf import settings
 from ninja import NinjaAPI
 from ninja.errors import HttpError
 from iscc_registry import settings
@@ -133,7 +134,10 @@ def register_(request, declartion: Declaration):
     try:
         iid_obj = register(declartion)
         # enqueue task to fetch metadata
-        fetch_metadata(iid_obj.did)
+        try:
+            fetch_metadata(iid_obj.did)
+        except Exception:
+            pass
         return 201, dict(did=iid_obj.did, iscc_id=f"ISCC:{iid_obj.iscc_id}")
     except RegistrationError as e:
         return 422, Message(message=str(e))
