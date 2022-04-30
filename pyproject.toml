@@ -32,6 +32,7 @@ django-cors-headers = "^3.11"
 sentry-sdk = "^1.5"
 iscc-schema = "^0.3.7"
 bleach = "^5.0.0"
+mistune = "^2.0.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1"
@@ -49,12 +50,11 @@ reqs = { cmd = "poetry export -f requirements.txt --output requirements.txt", he
 format = { cmd = "poetry run black .", help = "Code style formating with black" }
 lf = { cmd = "poetry run python -m dev.lf", help = "Convert line endings to lf"}
 test = { cmd = "poetry run pytest", help = "Run tests" }
-
 demo = { cmd = "poetry run python -m dev.demo", help = "Install app with demo user"}
 load = { cmd = "poetry run python -m dev.load", help = "Load some test data"}
-run = { cmd = "uvicorn iscc_registry.asgi:application --reload"}
-
+run = { cmd = "uvicorn iscc_registry.asgi:application --reload", help = "Run dev server"}
 all = ["reqs", "format", "lf", "test"]
+
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "tests.settings"
