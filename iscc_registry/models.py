@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.conf import settings
-from iscc_registry.utils import linkify
+from iscc_registry.utils import linkify, render_markdown
 
 
 class User(AbstractUser):
@@ -258,7 +258,9 @@ class IsccId(models.Model):
 
     @display(description="description")
     def display_description(self):
-        return self.metadata.get("description") if self.metadata else None
+        text = self.metadata.get("description") if self.metadata else None
+        if text:
+            return render_markdown(text)
 
     @display(description="thumbnail")
     def display_thumbnail(self):
