@@ -89,7 +89,7 @@ class IsccIdAdmin(PublicModelAdmin):
     def get_queryset(self, request):
         """Only list active and non-deleted ISCC-IDs"""
         qs = super().get_queryset(request)
-        return qs.filter(active=True, deleted=False)
+        return qs.filter(active=True, deleted=False, redacted=False)
 
 
 class ChainAdmin(PublicModelAdmin):

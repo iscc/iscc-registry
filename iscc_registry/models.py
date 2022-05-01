@@ -120,6 +120,7 @@ class IsccId(models.Model):
         null=False,
         on_delete=models.PROTECT,
         related_name="declarations_from_user",
+        help_text="Blockchain address of declaring party",
     )
 
     meta_url = models.URLField(
@@ -193,6 +194,7 @@ class IsccId(models.Model):
         default=None,
         on_delete=models.SET_NULL,
         related_name="registrations",
+        help_text="Contract address of registrar",
     )
 
     simhash = models.CharField(
@@ -204,7 +206,7 @@ class IsccId(models.Model):
         null=True,
         blank=True,
         default=None,
-        help_text="Linked ISCC Metadata",
+        help_text="Imported ISCC Metadata",
     )
 
     frozen = models.BooleanField(
@@ -225,10 +227,16 @@ class IsccId(models.Model):
         help_text="Number of times updated",
     )
 
+    redacted = models.BooleanField(
+        verbose_name="redacted",
+        default=False,
+        help_text="Whether the ISCC-ID has been redacted",
+    )
+
     @staticmethod
     def get_safe(iscc_id: str):
         """Ensure only the active and non-deleted ISCC-ID is returned"""
-        return IsccId.objects.get(iscc_id=iscc_id, active=True, deleted=False)
+        return IsccId.objects.get(iscc_id=iscc_id, active=True, deleted=False, redacted=False)
 
     def get_admin_url(self):
         content_type = ContentType.objects.get_for_model(self.__class__)
@@ -298,3 +306,28 @@ class IsccId(models.Model):
 
     def __repr__(self):
         return f"IsccId({self.did})"
+
+
+class Redact(IsccId):
+    class Meta:
+        proxy = True
+        verbose_name = "redact"
+        verbose_name_plural = "redactions"
+
+    @display(description="thumbnail")
+    def display_thumbnail(self):
+        thumb = self.metadata.get("thumbnail") if self.metadata else None
+        if thumb:
+            html = f'<img src="{thumb}" width="60" height="60"/>'
+            return mark_safe(html)
+
+    @display(description="large thumbnail")
+    def display_thumbnail_large(self):
+        thumb = self.metadata.get("thumbnail") if self.metadata else None
+        if thumb:
+            html = f'<img src="{thumb}"/>'
+            return mark_safe(html)
+
+    @display(ordering="timestamp", description="time")
+    def display_timestamp(self):
+        return self.timestamp.strftime("%Y-%m-%d %H:%M:%S")

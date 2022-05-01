@@ -54,3 +54,42 @@ class IsccIDAdmin(admin.ModelAdmin):
     @admin.display(ordering="iscc_code", description="iscc-code")
     def admin_iscc_code(self, obj):
         return f"ISCC:{obj.iscc_code}"
+
+
+@admin.register(models.Redact)
+class RedactAdmin(admin.ModelAdmin):
+    list_per_page = 15
+    actions = None
+    list_display = [
+        "display_thumbnail",
+        "iscc_id",
+        "display_name",
+        "display_description",
+        "display_timestamp",
+        "redacted",
+    ]
+    list_editable = ["redacted"]
+    list_filter = ["redacted"]
+
+    search_fields = ["iscc_id", "iscc_code", "metadata"]
+
+    formfield_overrides = {
+        JSONField: {"widget": JSONEditorWidget(options={"mode": "view", "modes": ["view"]})},
+    }
+
+    readonly_fields = [
+        "display_thumbnail_large",
+        "did",
+        "iscc_id",
+        "iscc_code",
+        "declarer",
+        "registrar",
+        "display_meta_url",
+    ]
+
+    fields = ["redacted"] + readonly_fields + ["metadata"]
+
+    def get_queryset(self, request):
+        """Only list active and non-deleted ISCC-IDs"""
+        qs = super().get_queryset(request)
+        return qs.filter(active=True, deleted=False)
