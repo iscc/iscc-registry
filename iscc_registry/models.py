@@ -14,6 +14,21 @@ from iscc_registry.utils import linkify, render_markdown
 class User(AbstractUser):
     """A user of the registry"""
 
+    name = models.CharField(
+        verbose_name="name",
+        max_length=150,
+        null=True,
+        blank=True,
+        default=None,
+    )
+
+    url = models.URLField(
+        verbose_name="url",
+        null=True,
+        blank=True,
+        default=None,
+    )
+
     @classmethod
     def get_or_create(cls, wallet: str, group: str):
         """Get or reate user and add to group"""

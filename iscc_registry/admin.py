@@ -5,7 +5,15 @@ from django_json_widget.widgets import JSONEditorWidget
 from iscc_registry import models
 
 
-admin.site.register(models.User, UserAdmin)
+@admin.register(models.User)
+class IsccUserAdmin(UserAdmin):
+    def get_fieldsets(self, request, obj=None):
+        if not obj:
+            return self.add_fieldsets
+        original = super().get_fieldsets(request, obj)
+        pi = ("Personal info", {"fields": ("name", "first_name", "last_name", "email", "url")})
+        extended = (original[0], pi, original[2], original[3])
+        return extended
 
 
 @admin.register(models.ChainModel)
