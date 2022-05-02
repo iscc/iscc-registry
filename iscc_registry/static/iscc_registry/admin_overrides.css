@@ -3,3 +3,7 @@
 #result_list tbody {
     font-family: 'JetBrains Mono', monospace;
 }
+
+ul.object-tools {
+    display: none;
+}
