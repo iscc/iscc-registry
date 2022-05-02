@@ -5,13 +5,14 @@ from iscc_registry.public import public_admin
 from iscc_registry import views
 from django.views.generic.base import RedirectView
 
+index = RedirectView.as_view(url="/registry/iscc_registry/isccid/")
 
 urlpatterns = [
     path("api/v1/", api_v1.urls, name="api-v1"),
     path("dashboard/", admin.site.urls, name="dashboard"),
-    path("registry/", RedirectView.as_view(url="/registry/iscc_registry/isccid/")),
-    path("registry/iscc_registry/", RedirectView.as_view(url="/registry/iscc_registry/isccid/")),
+    path("registry/", index),
+    path("registry/iscc_registry/", index),
     path("registry/", public_admin.urls, name="registry"),
     path("<str:iscc_id>/", views.resolver, name="resolver"),
-    path("", RedirectView.as_view(url="/registry/iscc_registry/isccid/"), name="index"),
+    path("", index, name="index"),
 ]
