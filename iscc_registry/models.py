@@ -306,6 +306,18 @@ class IsccId(models.Model):
         html = f'<a href="{url}" target="top">{url}</a>'
         return mark_safe(html)
 
+    @display(description="Registrar")
+    def display_registrar(self):
+        name = ""
+        if self.registrar:
+            name = self.registrar.name
+            if not name:
+                uname = self.registrar.username
+                name = uname[:6] + "..." + uname[-6:]
+            if self.registrar.url:
+                name = mark_safe(f'<a href="{self.registrar.url}" target="top">{name}</a>')
+        return name
+
     def ancestor(self) -> Optional["IsccId"]:
         """Return previous declaration for this ISCC-ID if existent"""
         return (
