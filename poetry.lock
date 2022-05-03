@@ -315,6 +315,14 @@ doc = ["mkdocs", "mkdocs-material", "markdown-include"]
 test = ["pytest", "pytest-cov", "pytest-django", "pytest-asyncio", "black", "isort", "flake8", "mypy (==0.930)", "django-stubs"]
 
 [[package]]
+name = "django-object-actions"
+version = "4.0.0"
+description = "A Django app for adding object tools for models in the admin"
+category = "main"
+optional = false
+python-versions = ">=3.7,<4.0"
+
+[[package]]
 name = "django-public-admin"
 version = "0.0.5"
 description = "A public read-only version of the Django Admin"
@@ -914,7 +922,7 @@ python-versions = ">=3.6"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.11"
-content-hash = "bc103ba68cf7d48b6e0d20f17e350c726b0ae713ee388ed41b20fd013526b3e6"
+content-hash = "dba1ef82d62104b7808abdf777be849a13d252998048a876f0ac655378a01b50"
 
 [metadata.files]
 asgiref = [
@@ -1118,6 +1126,10 @@ django-json-widget = [
 django-ninja = [
     {file = "django-ninja-0.17.0.tar.gz", hash = "sha256:f6e80cbfd67de0c6fbf8fa2948f194a1ac375b67c43d6a79808d325abba94eb5"},
     {file = "django_ninja-0.17.0-py3-none-any.whl", hash = "sha256:31a5c040a36c620deb4c20731c094540e3245a7b885a7f9d28e85098886595fc"},
+]
+django-object-actions = [
+    {file = "django-object-actions-4.0.0.tar.gz", hash = "sha256:e08f46ff4b41509d6647486ab2a2305692e80c126bdf9327b7a357d9724db53b"},
+    {file = "django_object_actions-4.0.0-py3-none-any.whl", hash = "sha256:d87b4bb8a31e8485291acae39ceede40316091914d24bfb3073b54138f409313"},
 ]
 django-public-admin = [
     {file = "django-public-admin-0.0.5.tar.gz", hash = "sha256:24be0abbe47b8aa6dad18ffe0ca4973a85f59dceca1cc9d307be605d5bfca03d"},

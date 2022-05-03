@@ -2,7 +2,9 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.db.models import JSONField
 from django_json_widget.widgets import JSONEditorWidget
+from django_object_actions import DjangoObjectActions
 from iscc_registry import models
+from iscc_registry import tasks
 
 
 @admin.register(models.User)
@@ -28,7 +30,7 @@ class ChainAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.IsccId)
-class IsccIDAdmin(admin.ModelAdmin):
+class IsccIDAdmin(DjangoObjectActions, admin.ModelAdmin):
     list_per_page = 20
     search_fields = [
         "=iscc_id",
@@ -50,6 +52,15 @@ class IsccIDAdmin(admin.ModelAdmin):
             "widget": JSONEditorWidget(width="53em", height="18em", options={"mode": "view"})
         },
     }
+
+    def fetch_metdata(self, request, obj):
+        result = tasks.fetch_metadata(did=obj.did)
+        result(blocking=True)
+
+    fetch_metdata.label = "Update"
+    fetch_metdata.short_description = "Fetch metadata from Meta-URL"
+
+    change_actions = ("fetch_metdata",)
 
     @admin.display(ordering="timestamp", description="timestamp")
     def admin_time(self, obj):

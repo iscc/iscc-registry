@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_json_widget",
     "huey.contrib.djhuey",
+    "django_object_actions",
     "iscc_registry",
 ]
 
