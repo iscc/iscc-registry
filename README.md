@@ -10,7 +10,7 @@ registry (also called Meta-Registry) based on the declaration protocol of the
 
 An ISCC-CODE is an open-source, content-based identifier and fingerprint for digital media assets.
 By declaring ISCC-CODEs on public blockchains users can obtain a short and globally unique ISCC-ID
-which associates the ISCC-CODE with their blockchain wallet address/identity and optianally a link
+which associates the ISCC-CODE with their blockchain wallet address/identity and optionally a link
 to machine-readable external metadata.
 
 ![ISCC Decentralized Content Registry Architecture](docs/iscc-decentralized-content-registry.svg)
