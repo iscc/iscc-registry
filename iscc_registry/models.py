@@ -1,3 +1,4 @@
+import json
 from typing import Optional
 
 from django.contrib.admin import display
@@ -317,6 +318,12 @@ class IsccId(models.Model):
             if self.registrar.url:
                 name = mark_safe(f'<a href="{self.registrar.url}" target="top">{name}</a>')
         return name
+
+    @display(description="Matadata")
+    def display_metadata(self):
+        if self.metadata:
+            pretty = json.dumps(self.metadata, indent=2)
+            return mark_safe("<pre>" + pretty + "</pre>")
 
     def ancestor(self) -> Optional["IsccId"]:
         """Return previous declaration for this ISCC-ID if existent"""
