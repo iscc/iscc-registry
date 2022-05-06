@@ -47,3 +47,27 @@ poe demo
 python manage.py runserver
 ```
 
+## Configuration
+The service is configured via environment variables:
+
+- **`DEBUG`** - Run the service in debug mode (True/False). Disable for production use.
+- **`TESTNET`** - Enable if you are indexing declarations from testnetworks (True/False).
+- **`HUEY_SIMULATE`** - Run background tasks in immediate/blocking mode (True/False). Disable for production use.
+- **`SECRET_KEY`** - Set to a unique, unpredictable value (used by Django for cryptographic signing).
+- **`OBSERVER_TOKEN`** - Set to a secure string used for authentication of observers.
+- **`SITE_ADDRESS`** - Set to domain (including scheme) of the installation.
+- **`SITE_EMAIL`** - Set to operators email address (if using Caddyfile).
+- **`ALLOWED_HOSTS`** - All domains (without scheme) the web app will respond to.
+- **`CSRF_TRUSTED_ORIGINS`** - A comma separated list of trusted origins for unsafe requests (e.g. POST).
+- **`CORS_ALLOW_ALL_ORIGINS`** - If True, all origins will be allowed to make api requests.
+- **`DATABASE_URL`** - Database url including username password for connecting to database.
+- **`POSTGRES_USER`** - Postgres username (if using local postgress containter).
+- **`POSTGRES_PASSWORD`** - Postgress password (if using local postrgress container).
+- **`REDIS_URL`** - Redis connection string for (used by task queue).
+- **`IPFS_GATEWAY`** - IPFS Gateway URL used for ingesting metadata.
+- **`IPFS_RETRIES`** - Number of times to try loading metadata via IPFS.
+- **`IPFS_RETRY_DELAY`** - Delay between retries in number of seconds.
+- **`SENTRY_DSN`** - Optional connection string to sentry.io for error reporting.
+- **`READ_TIMEOUT`** - Read timeout in seconds for metadata downloads.
+
+See [example values](.env.dev)
