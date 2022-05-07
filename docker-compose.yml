@@ -16,7 +16,7 @@ services:
       - db:/var/lib/postgresql/data
   redis:
     container_name: iscc-registry-redis
-    image: redis:alpine
+    image: redis:7-alpine
   app:
     container_name: iscc-registry-app
     init: true
