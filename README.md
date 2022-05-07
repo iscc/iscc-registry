@@ -8,6 +8,34 @@
 registry (also called Meta-Registry) based on the declaration protocol of the
 **International Standard Content Code** ([ISCC](https://iscc.codes)).
 
+## Overview
+
+<img align="left" width="200" src="docs/iscc-id-listing.jpg?raw=true">
+
+**Frontend**
+
+The frontend application installt at the domain root shows a listing of the latest ISCC
+registrations and allows for basic search and detail views of declaration data.
+URL of the scheme my-install.site/<iscc-id> are resolved to their indended redirection target.
+<br clear="left"/>
+
+<img align="left" width="200" src="docs/iscc-registry-api.jpg?raw=true">
+
+**API**
+
+The app also provides a REST API for ISCC-ID lookups and syncronization with observers.
+An interactive demo frontend is available at my-install.site/api/v1/docs
+<br clear="left"/>
+
+<img align="left" width="200" src="docs/iscc-registry-dashboard.jpg?raw=true">
+
+**Dashboard**
+
+The backend application supports content moderation for operators at my-install.site/dashboard.
+<br clear="left"/>
+
+## Background
+
 An ISCC-CODE is an open-source, content-based identifier and fingerprint for digital media assets.
 By declaring ISCC-CODEs on public blockchains users can obtain a short and globally unique ISCC-ID
 which associates the ISCC-CODE with their blockchain wallet address/identity and optionally a link

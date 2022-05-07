@@ -19,7 +19,7 @@ env = environ.Env(
     IPFS_RETRIES=(int, 10),
     IPFS_RETRY_DELAY=(int, 60),
     READ_TIMEOUT=(int, 30),
-    SITE_EMAIL=(str, "example@example.com")
+    SITE_EMAIL=(str, "example@example.com"),
 )
 
 SENTRY_DSN = env("SENTRY_DSN")
