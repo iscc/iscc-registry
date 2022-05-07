@@ -14,7 +14,7 @@ registry (also called Meta-Registry) based on the declaration protocol of the
 
 **Frontend**
 
-The frontend application installt at the domain root shows a listing of the latest ISCC
+The frontend application at the site root shows a listing of the latest ISCC
 registrations and allows for basic search and detail views of declaration data.
 URL of the scheme my-install.site/<iscc-id> are resolved to their indended redirection target.
 <br clear="left"/>
@@ -23,7 +23,7 @@ URL of the scheme my-install.site/<iscc-id> are resolved to their indended redir
 
 **API**
 
-The app also provides a REST API for ISCC-ID lookups and syncronization with observers.
+The app provides a REST API for ISCC-ID lookups and syncronization with observers.
 An interactive demo frontend is available at my-install.site/api/v1/docs
 <br clear="left"/>
 
