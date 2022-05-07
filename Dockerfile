@@ -1,6 +1,11 @@
-FROM python:3.9 AS builder
+FROM python:3.9-slim AS builder
 
-ARG POETRY_VERSION=1.1.12
+# Install build dependencies
+RUN apt-get update \
+&& apt-get install gcc -y \
+&& apt-get clean
+
+ARG POETRY_VERSION=1.1.13
 
 # Disable stdout/stderr buggering, can cause issues with Docker logs
 ENV PYTHONUNBUFFERED=1
@@ -13,8 +18,7 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
 ENV POETRY_NO_INTERACTION=1 \
   POETRY_VIRTUALENVS_PATH=/venvs
 
-# Install Poetry and create venv
-# hadolint ignore=DL3013
+# Install Poetry
 RUN pip install -U pip wheel setuptools && \
   pip install "poetry==$POETRY_VERSION"
 
@@ -30,11 +34,24 @@ FROM builder AS dev-runtime
 
 RUN poetry install
 
-
-COPY dev/entrypoint-dev.sh /app/dev/
-COPY dev/entrypoint-worker.sh /app/dev/
-ENTRYPOINT [ "dev/entrypoint-dev.sh" ]
+COPY dev/entrypoint.sh /app/dev/
+ENTRYPOINT [ "dev/entrypoint.sh" ]
 
 EXPOSE 8000/tcp
 
 CMD ["poetry", "run", "gunicorn", "iscc_registry.asgi:application", "--bind=0.0.0.0:8000", "-k", "uvicorn.workers.UvicornWorker", "--reload"]
+
+#
+# prod-runtime
+#
+
+FROM builder AS prod-runtime
+
+RUN poetry install --no-dev --remove-untracked
+
+COPY . /app/
+ENTRYPOINT [ "dev/entrypoint.sh" ]
+
+EXPOSE 8000/tcp
+
+CMD ["poetry", "run", "gunicorn", "iscc_registry.asgi:application", "--bind=0.0.0.0:8000", "-k", "uvicorn.workers.UvicornWorker"]

@@ -7,7 +7,7 @@ until poetry run python -m dev.db_check; do
 done
 
 if [ "${AUTO_MIGRATE_AND_INSTALL-false}" == "true" ]; then
-    poetry run poe demo
+    poetry run python -m dev.demo
 fi
 
 exec "$@"
