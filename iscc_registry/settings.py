@@ -19,6 +19,7 @@ env = environ.Env(
     IPFS_RETRIES=(int, 10),
     IPFS_RETRY_DELAY=(int, 60),
     READ_TIMEOUT=(int, 30),
+    SITE_EMAIL=(str, "example@example.com")
 )
 
 SENTRY_DSN = env("SENTRY_DSN")
@@ -137,14 +138,13 @@ HUEY = {
     "immediate": env("HUEY_SIMULATE"),
 }
 
-# Metadata download retries
+# App Settings
 IPFS_RETRIES = env("IPFS_RETRIES")
 IPFS_RETRY_DELAY = env("IPFS_RETRY_DELAY")
-
-# Access token for observers
 OBSERVER_TOKEN = env("OBSERVER_TOKEN")
 IPFS_GATEWAY = env("IPFS_GATEWAY")
 CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS")
 CORS_ALLOW_ALL_ORIGINS = env("CORS_ALLOW_ALL_ORIGINS")
 TESTNET = env("TESTNET")
 READ_TIMEOUT = env("READ_TIMEOUT")
+SITE_EMAIL = env("SITE_EMAIL")
