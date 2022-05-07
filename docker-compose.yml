@@ -7,7 +7,6 @@ volumes:
 
 services:
   db:
-    container_name: iscc-registry-db
     image: postgres:14
     init: true
     env_file:
@@ -15,10 +14,8 @@ services:
     volumes:
       - db:/var/lib/postgresql/data
   redis:
-    container_name: iscc-registry-redis
     image: redis:7-alpine
   app:
-    container_name: iscc-registry-app
     init: true
     depends_on:
       - db
@@ -36,7 +33,6 @@ services:
     ports:
       - 127.0.0.1:8000:8000
   worker:
-    container_name: iscc-registry-worker
     init: true
     depends_on:
       - db
@@ -54,7 +50,6 @@ services:
       AUTO_MIGRATE_AND_INSTALL: "false"
     command: dev/entrypoint-worker.sh
   caddy:
-    container_name: iscc-registry-caddy
     image: "caddy:2.4.6-alpine"
     restart: unless-stopped
     env_file:
