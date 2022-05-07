@@ -30,8 +30,6 @@ services:
     environment:
       HUEY_SIMULATE: "false"
       AUTO_MIGRATE_AND_INSTALL: "true"
-    ports:
-      - 127.0.0.1:8000:8000
   worker:
     init: true
     depends_on:
