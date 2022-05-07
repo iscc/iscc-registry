@@ -2,7 +2,7 @@
 
 - creates the database
 - import theme fixtures
-- create demo user
+- create initial user
 
 """
 import sys
@@ -21,7 +21,7 @@ HERE = pathlib.Path(__file__).parent.absolute()
 django.setup()
 
 
-def demo():
+def delete_dev_db():
     dev_db = HERE / "dev.db"
     if dev_db.exists():
         log.info(f"purge dev database at {dev_db}")
@@ -31,28 +31,55 @@ def demo():
             log.error(f"failed deleting dev database - retry after stopping dev server")
             sys.exit(0)
 
+
+def migrate():
     log.info("run database migrations")
     management.call_command("migrate")
 
-    log.info("load fixtures")
+
+def load_fixtures():
+    log.info("load theme fixture")
     management.call_command("loaddata", "--app", "admin_interface.Theme", "theme")
+    log.info("load chains fixture")
     management.call_command("loaddata", "--app", "iscc_registry.ChainModel", "chains")
 
+
+def collect_static():
     log.info("collect staticfiles")
     management.call_command("collectstatic", "--noinput")
 
-    log.info("create demo user")
+
+def create_user():
+    from django.conf import settings
+    import secrets
+
+    log.info("create initial user")
+    if settings.DEBUG:
+        username = "demo"
+        password = "demo"
+        email = "demo@eexample.com"
+    else:
+        username = "admin"
+        password = secrets.token_hex(32)
+        email = settings.SITE_EMAIL
+
     User = get_user_model()
-    username = "demo"
-    password = "demo"
-    email = "demo@eexample.com"
+
     if not User.objects.filter(username=username).exists():
         User.objects.create_superuser(username=username, password=password, email=email)
-        log.info("############ CREATED DEMO SUPERUSER ############ ")
+        log.info("############ CREATED INITIAL SUPERUSER ############ ")
         log.info(f"Username: {username}")
         log.info(f"Password: {password}")
     else:
-        log.info("Skipped creating demo user - already exists")
+        log.info("Skipped creating initial user - already exists")
+
+
+def demo():
+    delete_dev_db()
+    migrate()
+    load_fixtures()
+    collect_static()
+    create_user()
 
 
 if __name__ == "__main__":
