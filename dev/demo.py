@@ -57,7 +57,7 @@ def create_user():
     if settings.DEBUG:
         username = "demo"
         password = "demo"
-        email = "demo@eexample.com"
+        email = "demo@example.com"
     else:
         username = "admin"
         password = secrets.token_hex(32)
