@@ -27,7 +27,6 @@ uvicorn = "^0.17"
 requests = "^2.27"
 eth-utils = "^2.0"
 pysha3 = "^1.0"
-poethepoet = "^0.13"
 django-cors-headers = "^3.11"
 sentry-sdk = "^1.5"
 iscc-schema = "^0.3.7"
@@ -38,8 +37,8 @@ django-object-actions = "^4.0.0"
 [tool.poetry.dev-dependencies]
 pytest = "^7.1"
 black = "^22.3"
-
 pytest-django = "^4.5.2"
+poethepoet = "^0.13"
 
 [tool.black]
 skip-string-normalization = false

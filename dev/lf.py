@@ -8,7 +8,7 @@ UNIX_LINE_ENDING = b"\n"
 
 
 def main():
-    extensions = {".py", ".toml", ".lock", ".txt", ".yml"}
+    extensions = {".py", ".toml", ".lock", ".txt", ".yml", ".sh"}
     n = 0
     for fp in HERE.glob("**/*"):
         if fp.suffix in extensions:
