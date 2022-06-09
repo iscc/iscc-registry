@@ -10,6 +10,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.conf import settings
 from iscc_registry.utils import linkify, render_markdown
+import iscc_schema as ics
 
 
 class User(AbstractUser):
@@ -322,7 +323,10 @@ class IsccId(models.Model):
     @display(description="Matadata")
     def display_metadata(self):
         if self.metadata:
-            pretty = json.dumps(self.metadata, indent=2)
+            try:
+                pretty = ics.IsccMeta(**self.metadata).json(indent=2)
+            except Exception:
+                pretty = json.dumps(self.metadata, indent=2)
             return mark_safe("<pre>" + pretty + "</pre>")
 
     def ancestor(self) -> Optional["IsccId"]:
