@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "iscc-registry"
-version = "0.1.1"
+version = "0.1.2"
 description = "ISCC - Decentralized Content Registry"
 authors = ["Titusz <tp@py7.de>"]
 license = "Apache-2.0"
