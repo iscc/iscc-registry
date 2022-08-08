@@ -1,5 +1,8 @@
 # Changelog
 
+[0.1.3] - 2022-08-08
+- Fix CI build target
+
 [0.1.2] - 2022-08-08
 - Update to Django 4.1
 - Update to iscc-core 0.2.11
