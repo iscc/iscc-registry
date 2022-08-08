@@ -1,6 +1,6 @@
 # Changelog
 
-[0.1.2] - Unreleased
+[0.1.2] - 2022-08-08
 - Update to Django 4.1
 - Update to iscc-core 0.2.11
 - Update to iscc-schema 0.3.9
