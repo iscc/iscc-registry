@@ -1,6 +1,10 @@
 # Changelog
 
 [0.1.2] - Unreleased
+- Update to Django 4.1
+- Update to iscc-core 0.2.11
+- Update to iscc-schema 0.3.9
+- Update dependencies
 
 [0.1.1] - 2022-06-09
 - Improve ISCC Metadata rendering
